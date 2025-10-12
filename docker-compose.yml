@@ -1,0 +1,118 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq-server
+    ports:
+      - "5673:5672"   # AMQP
+      - "15673:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - mvts_network
+
+  # 1
+  vehiculos:
+    build: ./vehiculos
+    container_name: vehiculos
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    networks:
+      - mvts_network
+
+  # 2
+  telemetria:
+    build: ./telemetria
+    container_name: telemetria-service
+    depends_on:
+      - rabbitmq
+      - vehiculos
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    networks:
+      - mvts_network
+
+  # 3
+  semaforos:
+    build: ./semaforos
+    container_name: semaforos-service
+    depends_on:
+      - rabbitmq
+      - vehiculos
+      - telemetria
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    networks:
+      - mvts_network
+
+  # 4
+  alertas:
+    build: ./alertas
+    container_name: alertas-service
+    depends_on:
+      - rabbitmq
+      - vehiculos
+      - telemetria
+      - semaforos
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    networks:
+      - mvts_network
+
+
+  # 5
+  reportes:
+    build: ./reportes
+    container_name: reportes-service
+    depends_on:
+      - rabbitmq
+      - congestiones
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    networks:
+      - mvts_network
+
+
+  # 6
+  congestiones:
+    build: ./congestiones
+    container_name: congestiones-service
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    networks:
+      - mvts_network
+
+  # 7
+  viajes-completados:
+    build: ./viajes-completados
+    container_name: viajes-completados-service
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    networks:
+      - mvts_network
+
+networks:
+  mvts_network:
+    driver: bridge

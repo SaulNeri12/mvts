@@ -1,0 +1,2 @@
+pika        # Para RabbitMQ
+schedule    # Para tareas periódicas (actualizar posiciones)
