@@ -1,6 +1,17 @@
 version: "3.9"
 
 services:
+
+  consul:
+    image: hashicorp/consul:1.19.1
+    container_name: consul-server
+    ports:
+      - "8500:8500" # UI web de Consul
+      - "8600:8600/udp" # Puerto para consultas DNS
+    command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+    networks:
+      - mvts_network
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: rabbitmq-server
@@ -37,6 +48,8 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
     networks:
       - mvts_network
 
