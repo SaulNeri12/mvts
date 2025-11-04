@@ -42,14 +42,18 @@ services:
     build: ./telemetria
     container_name: telemetria-service
     depends_on:
+      - consul
       - rabbitmq
       - vehiculos
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
-      - CONSUL_HOST=consul
+      - CONSUL_HOST=consul-server
       - CONSUL_PORT=8500
+      - SERVICE_NAME=telemetria-service
+      - SERVICE_PORT=3006
+      - TTL_INTERVAL=10
     networks:
       - mvts_network
 
