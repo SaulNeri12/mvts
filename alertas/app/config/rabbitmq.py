@@ -7,18 +7,18 @@ RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
 RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT", "5672"))
 RABBITMQ_USER = os.getenv("RABBITMQ_USER", "guest")
 RABBITMQ_PASS = os.getenv("RABBITMQ_PASSWORD", "guest")
-POSICIONES_VEHICULOS_QUEUE = os.getenv("COLA_POSICIONES_VEHICULOS", "posiciones_queue")
 
-MAX_RETRIES = 15
-RETRY_DELAY = 3  # Segundos
+connection = None
+channel = None
 
 def connect_to_rabbitmq():
-    retries = MAX_RETRIES
+    """Intenta conectar a RabbitMQ hasta lograrlo"""
+    global connection, channel
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
 
-    while retries > 0:
+    while True:
         try:
-            print(f"[RABBITMQ] Intentando conectar a {RABBITMQ_HOST}:{RABBITMQ_PORT} - Reintentos restantes: {retries}")
+            print(f"[RABBITMQ] Intentando conectar a {RABBITMQ_HOST}:{RABBITMQ_PORT}")
 
             connection = pika.BlockingConnection(
                 pika.ConnectionParameters(
@@ -26,41 +26,30 @@ def connect_to_rabbitmq():
                     port=RABBITMQ_PORT,
                     credentials=credentials,
                     heartbeat=30,
-                    blocked_connection_timeout=300
+                    blocked_connection_timeout=90
                 )
             )
 
             channel = connection.channel()
-            channel.queue_declare(queue=POSICIONES_VEHICULOS_QUEUE)
-            print(f"[RABBITMQ] ✅ Conexión exitosa")
-            return connection, channel
+            print("[RABBITMQ] [*] Conexión exitosa")
+            break
 
         except Exception as e:
-            print(f"[RABBITMQ] ❌ Error conectando: {e}")
-            retries -= 1
-            time.sleep(RETRY_DELAY)
+            print(f"[RABBITMQ] [x] Error de conexión: {e}")
+            print("[RABBITMQ] ⏳ Reintentando en 5 segundos...")
+            time.sleep(5)
 
-    raise Exception("[RABBITMQ] ❌ No se pudo conectar después de varios intentos")
-
-def keep_connection_alive(conn):
+def keep_connection_alive():
+    """Mantiene vivo el heartbeat mientras la conexión esté abierta"""
     while True:
         try:
-            conn.process_data_events(time_limit=1)
-        except pika.exceptions.ConnectionClosed:
-            print("[RABBITMQ] Conexión cerrada. Intentando reconectar...")
-            reconnect(conn)
-            break
-        except Exception as e:
-            print(f"[RABBITMQ] Error en keep-alive: {e}")
+            if connection and connection.is_open:
+                connection.process_data_events(time_limit=1)
+        except Exception:
+            print("[!] Conexión perdida. Reintentando conexión...")
+            connect_to_rabbitmq()
         time.sleep(1)
 
-def reconnect(old_conn):
-    while True:
-        try:
-            new_conn, _ = connect_to_rabbitmq()
-            keep_connection_alive(new_conn)
-            print("[RABBITMQ] Reconexión exitosa")
-            break
-        except Exception as e:
-            print(f"[RABBITMQ] Error reconectando: {e}")
-            time.sleep(5)
+def start_rabbit():
+    connect_to_rabbitmq()
+    threading.Thread(target=keep_connection_alive, daemon=True).start()
