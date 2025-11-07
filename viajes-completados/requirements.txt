@@ -1,2 +1,4 @@
 pika        # Para RabbitMQ
 schedule    # Para tareas periódicas (actualizar posiciones)
+python-dotenv # acceso a .env
+python-consul2

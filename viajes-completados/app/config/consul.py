@@ -12,8 +12,8 @@ load_dotenv()
 # Variables de entorno
 CONSUL_HOST = os.getenv("CONSUL_HOST", "consul-server")
 CONSUL_PORT = int(os.getenv("CONSUL_PORT", "8500"))
-SERVICE_NAME = os.getenv("SERVICE_NAME", "telemetria-service")
-SERVICE_PORT = int(os.getenv("SERVICE_PORT", "3006"))
+SERVICE_NAME = os.getenv("SERVICE_NAME", "viajes-completados-service")
+SERVICE_PORT = int(os.getenv("SERVICE_PORT", "3008"))
 
 SERVICE_ID = f"{SERVICE_NAME}-{SERVICE_PORT}"
 
