@@ -11,6 +11,57 @@ RABBITMQ_PASS = os.getenv("RABBITMQ_PASSWORD", "guest")
 connection = None
 channel = None
 
+def create_queue(queue_name: str):
+    global channel
+
+    try:
+        if not channel or channel.is_closed:
+            raise Exception("[x] Channel no inicializado. Llama primero a connect().")
+
+        channel.queue_declare(queue=queue_name, durable=True)
+        print(f"[*] Cola creada: {queue_name}")
+    except Exception as e:
+        print(f"[*] Error creando la cola '{queue_name}': {e}")
+
+def publish_message(queue_name, message, exchange=""):
+    global connection, channel
+    for attempt in range(5):
+        try:
+            if not channel or channel.is_closed:
+                connection, channel = connect_to_rabbitmq()
+
+            channel.basic_publish(
+                exchange=exchange,
+                routing_key=queue_name,
+                body=message
+            )
+            print(f"[*] Mensaje enviado a {queue_name}: {message}")
+            return
+        except Exception as e:
+            print(f"[!] Error al enviar mensaje (intento {attempt+1}/5): {e}")
+            time.sleep(2)
+
+    print("[!] No se pudo enviar el mensaje tras varios intentos.")
+
+def start_consumer(queue_name, callback):
+    global connection, channel
+    while True:
+        try:
+            channel.queue_declare(queue=queue_name, durable=True)
+
+            channel.basic_consume(
+                queue=queue_name,
+                on_message_callback=callback,
+                auto_ack=True
+            )
+
+            print(f"[!] Consumidor escuchando {queue_name}")
+            channel.start_consuming()
+
+        except Exception as e:
+            print(f"[!] Consumidor caído: {e}")
+            time.sleep(3)
+
 def connect_to_rabbitmq():
     """Intenta conectar a RabbitMQ hasta lograrlo"""
     global connection, channel
@@ -19,7 +70,6 @@ def connect_to_rabbitmq():
     while True:
         try:
             print(f"[RABBITMQ] Intentando conectar a {RABBITMQ_HOST}:{RABBITMQ_PORT}")
-
             connection = pika.BlockingConnection(
                 pika.ConnectionParameters(
                     host=RABBITMQ_HOST,
@@ -29,11 +79,9 @@ def connect_to_rabbitmq():
                     blocked_connection_timeout=90
                 )
             )
-
             channel = connection.channel()
             print("[RABBITMQ] [*] Conexión exitosa")
-            break
-
+            return connection, channel
         except Exception as e:
             print(f"[RABBITMQ] [x] Error de conexión: {e}")
             print("[RABBITMQ] ⏳ Reintentando en 5 segundos...")
@@ -51,5 +99,4 @@ def keep_connection_alive():
         time.sleep(1)
 
 def start_rabbit():
-    connect_to_rabbitmq()
-    threading.Thread(target=keep_connection_alive, daemon=True).start()
+    connection, channel = connect_to_rabbitmq()
