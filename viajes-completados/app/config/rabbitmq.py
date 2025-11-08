@@ -11,6 +11,19 @@ RABBITMQ_PASS = os.getenv("RABBITMQ_PASSWORD", "guest")
 connection = None
 channel = None
 
+def create_fanout_exchange(exchange_name):
+    """Crea un exchange tipo fanout."""
+    global channel
+    channel.exchange_declare(exchange=exchange_name, exchange_type='fanout', durable=True)
+    print(f"[*] Exchange fanout creado: {exchange_name}")
+
+def create_queue_and_bind(queue_name, exchange_name):
+    """Crea una cola y la enlaza al exchange fanout."""
+    global channel
+    channel.queue_declare(queue=queue_name, durable=True)
+    channel.queue_bind(exchange=exchange_name, queue=queue_name)
+    print(f"[*] Cola '{queue_name}' enlazada a exchange '{exchange_name}'")
+
 def create_queue(queue_name: str):
     global channel
 
@@ -22,6 +35,18 @@ def create_queue(queue_name: str):
         print(f"[*] Cola creada: {queue_name}")
     except Exception as e:
         print(f"[*] Error creando la cola '{queue_name}': {e}")
+
+def publish_message_to_all(exchange_name, message):
+    global channel
+    try:
+        channel.basic_publish(
+            exchange=exchange_name,
+            routing_key="",
+            body=message
+        )
+        print(f"[*] Mensaje broadcast desde '{exchange_name}': {message}")
+    except Exception as e:
+        print(f"[!] Error enviando broadcast: {e}")
 
 def publish_message(queue_name, message, exchange=""):
     global connection, channel

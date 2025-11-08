@@ -1,5 +1,5 @@
 from config.consul import start_consul_connection
-from config.rabbitmq import start_rabbit, publish_message, create_queue
+from config.rabbitmq import start_rabbit, publish_message, create_fanout_exchange, create_queue_and_bind
 
 from dotenv import load_dotenv
 import time
@@ -7,7 +7,8 @@ import os
 
 load_dotenv() # cargar variables de entorno
 
-posiciones_vehiculos_queue = os.getenv("COLA_POSICIONES_VEHICULOS", "posiciones_vehiculos")
+posiciones_vehiculos_queue  = os.getenv("COLA_POSICIONES_VEHICULOS", "posiciones_vehiculos")
+telemetria_service_exchange = os.getenv("EXCHANGE_TELEMETRIA_SERVICE", "telemetria_service")
 
 def main():
     # conectarse al message broker (RabbitMQ)
@@ -16,13 +17,14 @@ def main():
     start_consul_connection()
 
     # creamos las colas necesarias
-    create_queue(posiciones_vehiculos_queue)
+    create_fanout_exchange(telemetria_service_exchange)
+    create_queue_and_bind(posiciones_vehiculos_queue, telemetria_service_exchange)
 
     print("[*] Telemetry service is running...")
 
     # Simulación de trabajo del servicio
     while True:
-        publish_message(posiciones_vehiculos_queue, "{\"message\":\"hola mundo\"}")
+        publish_message(posiciones_vehiculos_queue, '{"message":"hola mundo"}')
         time.sleep(3)
 
 if __name__ == "__main__":
