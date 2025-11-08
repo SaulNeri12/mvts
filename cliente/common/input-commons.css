@@ -1,0 +1,63 @@
+ @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+ 
+ :root {
+    --input-padding-right: #0979c9;
+    --button-primary-bg-color: #ff7300;
+    --button-cancel-bg-color: #e23535;
+  }
+  
+  label {
+    color: #131313;
+    font-size: 14px;
+    margin-bottom: 5px;
+    font: Roboto, sans-serif;
+  }
+
+  input {
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font: Roboto, sans-serif;
+  }
+
+  input:focus {
+    outline: none;
+    border-style: solid;
+    border-color: var(--input-padding-right);
+    border-width: 2px;
+  }
+
+  input:placeholder-shown {
+    outline: none;
+    border-style: solid;
+    border-color: var(--input-padding-right);
+    border-width: 2px;
+  }
+
+  select {
+    appearance: none;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font: Roboto, sans-serif;
+  }
+
+  select:focus {
+    outline: none;
+    border-style: solid;
+    border-color: var(--input-padding-right);
+    border-width: 2px;
+  }
+
+  select:placeholder-shown {
+    outline: none;
+    border-style: solid;
+    border-color: var(--input-padding-right);
+    border-width: 2px;
+  }
+
+
+
+

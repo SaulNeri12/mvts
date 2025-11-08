@@ -1,0 +1,22 @@
+{
+  "editor.tabSize": 4,
+  "editor.fontSize": 14,
+  "editor.minimap.enabled": true,
+  "window.zoomLevel": 1,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "editor.wordWrap": "on",
+  "files.autoSave": "onFocusChange",
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "javascript.validate.enable": false,
+  "typescript.validate.enable": false,
+  "liveServer.settings.port": 5501
+}

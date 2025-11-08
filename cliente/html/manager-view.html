@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Page tittle-->
+    <title>Vista administrador</title>
+    <!--Page icon-->
+    <link rel="icon" href="/Resources/logo.png" />
+
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="/css/manager-view.css" />
+    <link rel="stylesheet" href="/common/side-bar-commons.css" />
+    <link rel="stylesheet" href="/common/button-commons.css" />
+    <link rel="stylesheet" href="/common/input-commons.css" />
+    <link rel="stylesheet" href="/common/table-commons.css" />
+
+    <!----===== Boxicons CSS ===== -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <!----===== Google icons ===== -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&"
+    />
+
+    <!----===== lafletJS ===== -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!--<title>Dashboard Sidebar Menu</title>-->
+  </head>
+  <body>
+    <nav class="sidebar close">
+      <header>
+        <div class="image-text">
+          <span class="image">
+            <img src="/resources/logo.png" alt="" />
+          </span>
+          <div class="text logo-text">
+            <span class="name">MVTS</span>
+            <span class="profession">Administrador</span>
+          </div>
+        </div>
+      </header>
+      <div class="menu-bar">
+        <div class="menu">
+          <li class="search-box">
+            <i class="bx bx-search icon"></i>
+            <input type="text" placeholder="Search..." />
+          </li>
+          <ul class="menu-links">
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="text nav-text">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-bar-chart-alt-2 icon"></i>
+                <span class="text nav-text">Revenue</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-bell icon"></i>
+                <span class="text nav-text">Notifications</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-pie-chart-alt icon"></i>
+                <span class="text nav-text">Analytics</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-heart icon"></i>
+                <span class="text nav-text">Likes</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-wallet icon"></i>
+                <span class="text nav-text">Wallets</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="bottom-content">
+          <li class="">
+            <a href="#">
+              <i class="bx bx-log-out icon" id="logout-button"></i>
+              <span class="text nav-text">Logout</span>
+            </a>
+          </li>
+          <li class="mode">
+            <div class="sun-moon">
+              <i class="bx bx-moon icon moon"></i>
+              <i class="bx bx-sun icon sun"></i>
+            </div>
+            <span class="mode-text text">Dark mode</span>
+            <div class="toggle-switch">
+              <span class="switch"></span>
+            </div>
+          </li>
+        </div>
+      </div>
+    </nav>
+
+    <section class="home">
+      <div class="body-wrapper">
+
+        <div class="text">Reportes dinamicos</div>
+
+        <div class="stepper-wraper">
+          <p>Reportes dinamicos</p>
+          <p>></p>
+          <p>reporte de usuarios</p>
+        </div>
+
+        <div class="reports-filter-wrapper">
+
+          <div class="filters">
+            <div class="input-wrapper">
+              <label for="tipo-mensaje">Tipo de reporte</label>
+              <select id="tipo-mensaje" name="tipoMensaje">
+                <option value="" hidden selected>Seleccionar tipo</option>
+                <option value="alerta">Congestión</option>
+                <option value="exito">Entregas</option>
+              </select>
+            </div>
+
+            <!-- separator -->
+            <div class="separator"></div>
+
+            <div class="input-wrapper">
+              <label for="fecha-inicio">Desde</label>
+              <input type="date" id="fecha-inicio" name="fechaInicio" />
+            </div>
+
+            <div class="input-wrapper">
+              <label for="fecha-fin">Hasta</label>
+              <input type="date" id="fecha-fin" name="fechaFin" />
+            </div>
+          </div>
+          
+          
+          <div class="actions-wrapper">
+            <button class="button-search">
+              Buscar
+            <span class="material-symbols-outlined">search</span>
+            </button>
+            
+            <!-- separator -->
+            <div class="separator"></div>
+
+            <button type="reset" class="button-download">  
+              Descargar XLS
+              <span class="material-symbols-outlined">download</span>
+            </button>
+          </div>
+          
+      </div>
+
+        <!-- Table section -->
+        <div class="table-wrapper">
+          <table class="secondary-styled-table">
+            <div class="table-header">
+              <p class="table-tittle">Reporte de congestiones</p>
+            </div>
+            <colgroup>
+              <col style="width: 20%" />
+              <col style="width: 10%" />
+              <col style="width: 10%" />
+              <col style="width: 70%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Tramo</th>
+                <th>Mensaje</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2024-06-01</td>
+                <td>13:03</td>
+                <td>A-03</td>
+                <td>
+                  Se ha detectado una congestion en el tramo A-03
+                </td>
+              </tr>
+              <tr>
+                <td>2024-06-01</td>
+                <td>12:41</td>
+                <td>A-02</td>
+                <td>
+                  Se ha detectado una congestion en el tramo A-02
+                </td>
+              </tr>
+              <tr>
+                <td>2024-06-01</td>
+                <td>13:03</td>
+                <td>A-01</td>
+                <td>
+                  Se ha detectado una congestion en el tramo A-01
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Dialog for logout -->
+      <dialog id="logout-dialog" closedby="any">
+        <form method="dialog" class="dialog-form">
+          <p>¿Seguro que quieres cerrar sesión?</p>
+            <div class="dialog-buttons">
+              <button id="dialog-cancel-button" value="cancel">Cancelar</button>
+              <button id="dialog-confirm-button" value="confirm">
+                Confirmar
+              </button>
+            </div>
+        </form>
+      </dialog>
+
+    <script src="/controllers/manager-controller.js"></script>
+    <script src="/controllers/side-bar-controller.js"></script>
+  </body>
+</html>
