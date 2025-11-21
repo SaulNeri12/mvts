@@ -80,6 +80,7 @@ services:
       - rabbitmq
       - vehiculos
       - telemetria
+      - mongodb
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
@@ -88,6 +89,7 @@ services:
       - CONSUL_PORT=8500
       - SERVICE_NAME=semaforos-service
       - SERVICE_PORT=3050
+      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017
     networks:
       - mvts_network
 
