@@ -90,7 +90,7 @@ services:
       - CONSUL_PORT=8500
       - SERVICE_NAME=semaforos-service
       - SERVICE_PORT=3050
-      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/mvts?authSource=admin
+      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/semaforos?authSource=admin
     networks:
       - mvts_network
 
