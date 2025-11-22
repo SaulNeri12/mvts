@@ -7,6 +7,7 @@ const connectDB = async () => {
     await mongoose.connect(process.env.MONGO_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      authSource: 'admin'
     });
     console.log('Conexión a MongoDB exitosa para Semáforos');
   } catch (error) {

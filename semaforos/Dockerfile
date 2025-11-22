@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expone el puerto que usa tu app.
-EXPOSE 3001
+EXPOSE 3050
 
 # Comando final para correr la aplicación.
 CMD [ "node", "./bin/www" ]
