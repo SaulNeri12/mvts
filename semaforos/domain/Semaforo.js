@@ -20,12 +20,35 @@ class Semaforo {
     }
 
     next() {
-        // Ejecuta la lógica del estado actual
+        // Ejecuta la lógica del estado actual (ciclo normal)
         this.currentState.next();
     }
 
     getState() {
         return this.currentState.getName();
+    }
+
+    /**
+     * NUEVO: Permite forzar un estado manualmente.(me lo pidio el neri)
+     * Acepta texto ('verde', 'rojo') o números (0, 1, 2).
+     */
+    forceState(input) {
+        const val = String(input).toLowerCase().trim();
+
+        if (['verde', 'green', '0'].includes(val)) {
+            this.setState(this.green);
+            return 'verde';
+        }
+        if (['amarillo', 'yellow', '1'].includes(val)) {
+            this.setState(this.yellow);
+            return 'amarillo';
+        }
+        if (['rojo', 'red', '2'].includes(val)) {
+            this.setState(this.red);
+            return 'rojo';
+        }
+
+        throw new Error(`Estado inválido: ${input}. Use 'verde', 'amarillo' o 'rojo'.`);
     }
 }
 
