@@ -122,6 +122,7 @@ services:
     container_name: reportes-service
     depends_on:
       - rabbitmq
+      - congestiones
       - mongodb # es pa que mongo se inicie antes jsjs
     environment:
       - RABBITMQ_HOST=rabbitmq
