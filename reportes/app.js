@@ -22,20 +22,31 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/api/prueba', (req, res) => { // Usa un path diferente o el mismo
+    console.log('¡La petición LLEGÓ al servidor!');
+    res.json({ status: 'OK' });
+});
+
 // Rutas
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/reportes', reportesRouter); // Endpoint base
 
 // Inicialización de servicios de fondo
+
 (async () => {
-    await connectDB(); // 1. Conectar BD
-    startRabbitConsumer(); // 2. Iniciar escucha de colas
+    try {
+        console.log("Conectando a MongoDB...");
+        await connectDB();            // Espera a que Mongo esté listo
+
+        console.log("Iniciando consumidor de RabbitMQ...");
+        startRabbitConsumer();        // Colas
+
+        const PORT = process.env.SERVICE_PORT || 3002;
+        app.listen(PORT, () => {
+            console.log(`🚀 Reportes Service running at port ${PORT}`);
+        });
+    } catch (err) {
+        console.error("❌ Error inicializando servicio:", err);
+    }
 })();
-
-const PORT = process.env.SERVICE_PORT || 3002;
-app.listen(PORT, () => {
-    console.log(`Reportes Service running at port: ${PORT}`);
-});
-
-module.exports = app;

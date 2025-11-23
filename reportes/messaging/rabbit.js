@@ -1,6 +1,6 @@
 
 const amqp = require('amqplib');
-const Reporte = require('../models/Reporte');
+const Reporte = require('../models/reporte.model');
 
 // Nombres de las colas definidos por los otros servicios :v
 const QUEUE_CONGESTIONES = 'congestiones';

@@ -1,14 +1,25 @@
 
 var express = require('express');
 var router = express.Router();
-const Reporte = require('../models/Reporte');
+const Reporte = require('../models/reporte.model');
 
 // GET /api/reportes - Obtener todos
 router.get('/', async (req, res) => {
     try {
+
+        // 2. **CÓDIGOS DE DIAGNÓSTICO:**
+        console.log('--- DIAGNÓSTICO DE MODELO ---');
+        console.log('A) Tipo de Reporte:', typeof Reporte);
+        console.log('B) ¿Tiene Reporte la función find()?:', typeof Reporte.find);
+        console.log('C) Si es undefined, el problema es la IMPORTACIÓN.');
+        console.log('-----------------------------');
+
         const { tipo } = req.query;
         const filtro = tipo ? { tipo } : {};
         const reportes = await Reporte.find(filtro).sort({ fecha: -1 });
+
+        console.info(reportes);
+
         res.json(reportes);
     } catch (error) {
         res.status(500).json({ error: error.message });
