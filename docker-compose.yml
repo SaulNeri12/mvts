@@ -69,6 +69,8 @@ services:
       - SERVICE_NAME=telemetria-service
       - SERVICE_PORT=3006
       - TTL_INTERVAL=10
+    ports:
+    - "3006:3006"
     networks:
       - mvts_network
 
@@ -91,6 +93,8 @@ services:
       - SERVICE_NAME=semaforos-service
       - SERVICE_PORT=3050
       - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/semaforos?authSource=admin
+    ports:
+    - "3050:3050"
     networks:
       - mvts_network
 
@@ -112,6 +116,8 @@ services:
       - SERVICE_NAME=alertas-service
       - SERVICE_PORT=3012
       - TTL_INTERVAL=10
+    ports:
+    - "3012:3012"
     networks:
       - mvts_network
 
@@ -123,13 +129,21 @@ services:
     depends_on:
       - rabbitmq
       - congestiones
+      - mongodb # es pa que mongo se inicie antes jsjs
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
+      # Usamos el servicio 'mongodb' que ya estaba definido :D
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=reportes-db
+      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/reportes-db?authSource=admin
+      - SERVICE_PORT=3002
+    ports:
+    - "3002:3002"
     networks:
       - mvts_network
-
 
   # 6
   congestiones:
@@ -148,6 +162,8 @@ services:
       - SERVICE_NAME=congestiones-service
       - SERVICE_PORT=3010
       - TTL_INTERVAL=10
+    ports:
+    - "3010:3010"
     networks:
       - mvts_network
 
@@ -168,6 +184,8 @@ services:
       - SERVICE_NAME=viajes-completados-service
       - SERVICE_PORT=3008
       - TTL_INTERVAL=10
+    ports:
+    - "3008:3008"
     networks:
       - mvts_network
 
