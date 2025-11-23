@@ -2,6 +2,21 @@ version: "3.9"
 
 services:
 
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - mvts_network
+
+
   consul:
     image: hashicorp/consul:1.19.1
     container_name: consul-server
@@ -54,21 +69,32 @@ services:
       - SERVICE_NAME=telemetria-service
       - SERVICE_PORT=3006
       - TTL_INTERVAL=10
+    ports:
+    - "3006:3006"
     networks:
       - mvts_network
 
-  # 3
+   # 3
   semaforos:
     build: ./semaforos
     container_name: semaforos-service
     depends_on:
+      - consul
       - rabbitmq
       - vehiculos
       - telemetria
+      - mongodb
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
+      - CONSUL_HOST=consul-server
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=semaforos-service
+      - SERVICE_PORT=3050
+      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/semaforos?authSource=admin
+    ports:
+    - "3050:3050"
     networks:
       - mvts_network
 
@@ -90,6 +116,8 @@ services:
       - SERVICE_NAME=alertas-service
       - SERVICE_PORT=3012
       - TTL_INTERVAL=10
+    ports:
+    - "3012:3012"
     networks:
       - mvts_network
 
@@ -101,13 +129,21 @@ services:
     depends_on:
       - rabbitmq
       - congestiones
+      - mongodb # es pa que mongo se inicie antes jsjs
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
+      # Usamos el servicio 'mongodb' que ya estaba definido :D
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=reportes-db
+      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/reportes-db?authSource=admin
+      - SERVICE_PORT=3002
+    ports:
+    - "3002:3002"
     networks:
       - mvts_network
-
 
   # 6
   congestiones:
@@ -126,6 +162,8 @@ services:
       - SERVICE_NAME=congestiones-service
       - SERVICE_PORT=3010
       - TTL_INTERVAL=10
+    ports:
+    - "3010:3010"
     networks:
       - mvts_network
 
@@ -146,9 +184,15 @@ services:
       - SERVICE_NAME=viajes-completados-service
       - SERVICE_PORT=3008
       - TTL_INTERVAL=10
+    ports:
+    - "3008:3008"
     networks:
       - mvts_network
 
 networks:
   mvts_network:
     driver: bridge
+
+volumes:
+  mongo_data:
+

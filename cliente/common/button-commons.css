@@ -1,0 +1,111 @@
+
+
+:root {
+    --button-primary-bg-color: #ff7300;
+    --button-secondary-bg-color: #0979c9;
+    --button-cancel-bg-color: #e23535;
+    --button-disabled-bg-color: gray;
+    --button-reset-bg-color: #ffe310;
+    --button-text-color: white;
+    --button-text-color-secondary: rgb(36, 36, 36);
+    --button-padding: 6px 12px;
+}
+
+.primary-button{
+    padding: 6px 12px;
+    background-color: var(--button-primary-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.secondary-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    background-color: var(--button-secondary-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;    
+    cursor: pointer;    
+    font-size: 0.9rem;
+}
+
+.secondary-button span {
+    margin-left: 5px;
+    font-size: 1.2rem;
+}
+
+.secondary-button-icon {
+    padding: 6px 12px;
+    background-color: var(--button-secondary-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;    
+    cursor: pointer;
+}
+
+.secondary-button-icon span {
+    font-size: 1.2rem;
+}
+
+.cancel-button{
+    padding: var(--button-padding);
+    background-color: var(--button-cancel-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.disabled-button{
+    padding: var(--button-padding);
+    background-color: var(--button-disabled-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;
+    cursor: not-allowed;
+    font-size: 0.9rem;
+}
+
+.button-reset{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--button-padding);
+    background-color: var(--button-reset-bg-color);
+    color: var(--button-text-color-secondary);
+    border: none;
+    border-radius: 10px;
+    cursor: not-allowed;
+    font-size: 0.9rem;
+}
+
+.button-reset span {
+    margin-left: 5px;
+    font-size: 1.1rem;
+}
+
+button:hover {
+    filter: brightness(90%);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+
+
+.primary-button-bigger{
+    padding: 6px 12px;
+    background-color: var(--button-primary-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}

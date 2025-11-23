@@ -1,0 +1,27 @@
+1.- Creen un archivo .env en la misma ruta de este archivo y pongan esta variable "MONGO_URL=mongodb://localhost:27017/loads"
+
+2.- Hagan una conexion en el studio3T que se llame "vehicleloads"
+
+3.- Inserten este JSON:
+
+    db.vehicleloads.insertOne({
+    idVehicle: "TRUCK-001",
+    idDrive: "DRIVE-2025",
+    load: [{ 
+        material: "Grava", 
+        weight: 2500, 
+        timestamp: new Date("2025-11-08T10:00:00Z") 
+    }]
+    });
+
+    db.vehicleloads.insertOne({
+    idVehicle: "TRUCK-002",
+    idDrive: "DRIVE-2026",
+    load: [{ 
+        material: "Carbon", 
+        weight: 1900, 
+        timestamp: new Date("2025-11-08T10:00:00Z") 
+    }]
+    });
+
+4.- ejecuten el archivo "app.js"
