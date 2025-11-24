@@ -3,14 +3,19 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "devStart": "nodemon app.js",
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "amqplib": "^0.10.9",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "mongoose": "^8.19.3",
     "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }

@@ -1,27 +1,75 @@
-1.- Creen un archivo .env en la misma ruta de este archivo y pongan esta variable "MONGO_URL=mongodb://localhost:27017/loads"
+1.- Creen un archivo .env en la misma ruta de este archivo y 
+pongan estax variablex 
 
-2.- Hagan una conexion en el studio3T que se llame "vehicleloads"
+MONGO_URL=mongodb://localhost:27017/vehicles_service
+const RABBITMQ_HOST=localhost
+const RABBITMQ_USER=guest
+const RABBITMQ_PASSWORD=gues
 
-3.- Inserten este JSON:
+3.- Estas son las rutas para cada funcion y ejemplos de insercion:
 
-    db.vehicleloads.insertOne({
-    idVehicle: "TRUCK-001",
-    idDrive: "DRIVE-2025",
-    load: [{ 
-        material: "Grava", 
-        weight: 2500, 
-        timestamp: new Date("2025-11-08T10:00:00Z") 
-    }]
-    });
+    1.- Crear un nuevo vehiculo
 
-    db.vehicleloads.insertOne({
-    idVehicle: "TRUCK-002",
-    idDrive: "DRIVE-2026",
-    load: [{ 
-        material: "Carbon", 
-        weight: 1900, 
-        timestamp: new Date("2025-11-08T10:00:00Z") 
-    }]
-    });
+    http://localhost:3000/vehicle/create/
+
+    {
+        "code" : "VH-01",
+        "isActive" : true,
+        "load" : {
+            "material" : "Hierro",
+            "weight" : 150
+        }
+    }
+
+    {
+        "code" : "VH-02",
+        "isActive" : true,
+        "load" : {
+            "material" : "Carbon",
+            "weight" : 200
+        }
+    }
+
+    2.- Editar el atributo is active:
+
+    http://localhost:3000/vehicle/update/state/
+
+    {
+        "code": "VH-01",
+        "state": false 
+    }
+
+    3.- Editar la carga:
+
+    http://localhost:3000/vehicle/update/load/
+
+    {
+        "code": "VH-01",
+        "load": {
+            "material" : "crotolamo",
+            "weight" : 250
+        } 
+    }
+
+    4.- Editar la carga:
+
+    http://localhost:3000/vehicle/delete/
+
+    {
+        "code": "VH-01"
+    }
+
+    4.- Obtener vehiculo por codigo:
+
+    http://localhost:3000/vehicle/find/code/
+
+    Como este es un get se utiliza un parametro y no un body
+    key: code value: VH-01
+
+    5.- Obtener todos los vehiculos:
+
+    http://localhost:3000/vehicle/get/all/
+
+    No se ocupa boy ni parametros para esta peticion
 
 4.- ejecuten el archivo "app.js"
