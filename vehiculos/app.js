@@ -3,6 +3,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+require('dotenv').config();
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var vehicleRouter = require('./src/routers/vehicle.routes');
@@ -33,8 +35,21 @@ app.use('/', indexRouter);
 app.use('/', usersRouter);
 app.use('/', vehicleRouter); // load routes
 
-app.listen(3000, () => {
-	console.log("Server running at port: 3000");
-});
+(async () => {
+    try {
+        console.log("Conectando a MongoDB...");
+        await connectDB();
+
+        const PORT = process.env.SERVICE_PORT || 3002;
+
+        app.listen(PORT, () => {
+            console.log(`[*] Vehiculos-service running at port ${PORT}`);
+        });
+		
+    } catch (err) {
+        console.error("[x] Error inicializando servicio:", err);
+    }
+})();
+
 
 module.exports = app;

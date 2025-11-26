@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Comando final para correr la aplicación.
-CMD [ "node", "./bin/www" ]
+CMD [ "npm", "start" ]
