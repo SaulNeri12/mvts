@@ -28,9 +28,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/api/status', statusRouter);
-app.use('/api/semaforos', semaforosRouter); // <--- 2. USAR NUEVA RUTA
+app.use('/api/v1/users', usersRouter);
+
+app.use('/api/v1/status', statusRouter);
+app.use('/api/v1/semaforos', semaforosRouter); // <--- 2. USAR NUEVA RUTA
 
 // Secuencia de inicialización
 (async () => {

@@ -13,18 +13,6 @@ const connectRabbit = require('./src/config/rabbit');
 
 var app = express();
 
-/**
- * Starting
- */
-(async () => {
-	try {
-		await connectDB(); //dattabase connection
-		await connectRabbit(); //Init rabbitMQ
-	} catch (error) {
-		console.error('Critic failure starting the server: ', error);
-	}
-})();
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -32,15 +20,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/', usersRouter);
-app.use('/', vehicleRouter); // load routes
+app.use('/api/v1/users', usersRouter);
+
+app.use('/api/v1/vehicle', vehicleRouter);
 
 (async () => {
     try {
         console.log("Conectando a MongoDB...");
         await connectDB();
+        console.log("Conectando a RabbitMQ...");
+        await connectRabbit();
 
-        const PORT = process.env.SERVICE_PORT || 3002;
+        const PORT = process.env.SERVICE_PORT || 3000;
 
         app.listen(PORT, () => {
             console.log(`[*] Vehiculos-service running at port ${PORT}`);
@@ -48,6 +39,7 @@ app.use('/', vehicleRouter); // load routes
 		
     } catch (err) {
         console.error("[x] Error inicializando servicio:", err);
+        process.exit(1);
     }
 })();
 

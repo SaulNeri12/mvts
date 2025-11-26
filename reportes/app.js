@@ -24,8 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Rutas
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/api/reportes', reportesRouter); // Endpoint base
+app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/reportes', reportesRouter); // Endpoint base
 
 // Inicialización de servicios de fondo
 
