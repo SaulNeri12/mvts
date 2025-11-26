@@ -22,11 +22,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/api/prueba', (req, res) => { // Usa un path diferente o el mismo
-    console.log('¡La petición LLEGÓ al servidor!');
-    res.json({ status: 'OK' });
-});
-
 // Rutas
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

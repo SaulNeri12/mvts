@@ -82,7 +82,6 @@ services:
       - consul
       - rabbitmq
       - vehiculos
-      - telemetria
       - mongodb
     environment:
       - RABBITMQ_HOST=rabbitmq
@@ -129,7 +128,8 @@ services:
     depends_on:
       - rabbitmq
       - congestiones
-      - mongodb # es pa que mongo se inicie antes jsjs
+      - mongodb
+      - viajes-completados
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
