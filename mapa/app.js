@@ -17,8 +17,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.listen(3004, () => {
-    console.log("Server running at port: 3004");
-})
+(async () => {
+    try {
+      // TODO: PARA DESPUES
+      //console.log("Iniciando consumidor de RabbitMQ...");
+      //startRabbitConsumer();        // Colas
+
+      const PORT = process.env.SERVICE_PORT || 3004;
+      const SERVICE_NAME = process.env.SERVICE_NAME || "mapa-rutas";
+      app.listen(PORT, () => {
+          console.log(`[*] ${SERVICE_NAME} ejecutandose en el puerto: ${PORT}`);
+      });
+  } catch (err) {
+    console.error("[x] Error inicializando servicio :" + SERVICE_NAME, err);
+  }
+})();
 
 module.exports = app;

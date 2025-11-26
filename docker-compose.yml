@@ -42,13 +42,21 @@ services:
   # 1
   vehiculos:
     build: ./vehiculos
-    container_name: vehiculos
+    container_name: vehiculos-service
     depends_on:
+      - mongodb
       - rabbitmq
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
+      - CONSUL_HOST=consul-server
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=vehiculos-service
+      - SERVICE_PORT=3050
+      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/vehiculos?authSource=admin
+    ports:
+      - "3000:3000"
     networks:
       - mvts_network
 
@@ -81,7 +89,6 @@ services:
     depends_on:
       - consul
       - rabbitmq
-      - vehiculos
       - mongodb
     environment:
       - RABBITMQ_HOST=rabbitmq
@@ -127,9 +134,7 @@ services:
     container_name: reportes-service
     depends_on:
       - rabbitmq
-      - congestiones
       - mongodb
-      - viajes-completados
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
@@ -186,6 +191,26 @@ services:
       - TTL_INTERVAL=10
     ports:
     - "3008:3008"
+    networks:
+      - mvts_network
+
+  gateway:
+    build: ./gateway
+    container_name: api-gateway
+    depends_on:
+      - mongodb
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - CONSUL_HOST=consul-server
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=api-gateway
+      - SERVICE_PORT=8080
+      #- MONGO_URL=mongodb://root:rootpassword@mongodb:27017/vehiculos?authSource=admin
+    ports:
+      - "8080:8080"
     networks:
       - mvts_network
 

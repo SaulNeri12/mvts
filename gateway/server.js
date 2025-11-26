@@ -19,8 +19,18 @@ app.use(limiter); // Apply rate limiting to all requests
 // Protected routes
 app.use('/', usersRouter);
 
+(async () => {
+    try {
+      // TODO: PARA DESPUES
+      //console.log("Iniciando consumidor de RabbitMQ...");
+      //startRabbitConsumer();        // Colas
 
-// Start the server
-app.listen(3001, () => {
-  console.log('Gateway server is running on port 3001');
-});
+      const PORT = process.env.SERVICE_PORT || 3000;
+      const SERVICE_NAME = process.env.SERVICE_NAME || "api-gateway";
+      app.listen(PORT, () => {
+          console.log(`[*] ${SERVICE_NAME} ejecutandose en el puerto: ${PORT}`);
+      });
+  } catch (err) {
+    console.error("[x] Error inicializando servicio :" + SERVICE_NAME, err);
+  }
+})();

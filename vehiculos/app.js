@@ -7,8 +7,9 @@ require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var loadRouter = require('./src/routers/loadRoutes');
+var vehicleRouter = require('./src/routers/vehicle.routes');
 const connectDB = require('./src/config/db');
+const connectRabbit = require('./src/config/rabbit');
 
 var app = express();
 
@@ -19,15 +20,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/loads', loadRouter); // load routes
+app.use('/api/v1/users', usersRouter);
+
+app.use('/api/v1/vehicle', vehicleRouter);
 
 (async () => {
     try {
         console.log("Conectando a MongoDB...");
         await connectDB();
+        console.log("Conectando a RabbitMQ...");
+        await connectRabbit();
 
-        const PORT = process.env.SERVICE_PORT || 3002;
+        const PORT = process.env.SERVICE_PORT || 3000;
 
         app.listen(PORT, () => {
             console.log(`[*] Vehiculos-service running at port ${PORT}`);
@@ -35,6 +39,7 @@ app.use('/loads', loadRouter); // load routes
 		
     } catch (err) {
         console.error("[x] Error inicializando servicio:", err);
+        process.exit(1);
     }
 })();
 
