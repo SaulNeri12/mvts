@@ -5,7 +5,7 @@ import os
 
 load_dotenv()
 
-VEHICULOS_SERVICE_HOST = os.getenv("VEHICULOS_SERVICE_HOST", "http://vehiculos:3052")
+SEMAFOROS_SERVICE_HOST = os.getenv("SEMAFOROS_SERVICE_HOST", "http://semaforos:3050")
 
 # ------------------------------------------
 # Circuit Breaker configurado
@@ -18,8 +18,8 @@ circuit_breaker = pybreaker.CircuitBreaker(
 GET_ALL_TIMEOUT = 2
 
 @circuit_breaker
-def vehiculos_get_all() -> list:
-    url = VEHICULOS_SERVICE_HOST + "/api/v1/vehicle/get/all"
+def semaforos_get_all() -> list:
+    url = SEMAFOROS_SERVICE_HOST + "/api/v1/semaforos"
     response = requests.get(url, timeout=GET_ALL_TIMEOUT)
 
     if response.status_code == 200:

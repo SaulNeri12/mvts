@@ -2,6 +2,7 @@ from config.consul import start_consul_connection
 from config.rabbitmq import start_rabbit, publish_message, create_fanout_exchange, create_queue_and_bind
 
 from service import vehiculos_service
+from service import semaforos_service
 
 from dotenv import load_dotenv
 import time
@@ -25,6 +26,7 @@ def main():
     print("[*] Telemetry service is running...")
 
     #vehiculos_service.get_all()
+    #semaforos_service.get_all()
 
     # Simulación de trabajo del servicio
     while True:
