@@ -77,6 +77,8 @@ services:
       - SERVICE_NAME=telemetria-service
       - SERVICE_PORT=3006
       - TTL_INTERVAL=10
+      # variables para peticiones HTTP (temporal)
+      - VEHICULOS_SERVICE_HOST=http://vehiculos:3050
     ports:
     - "3006:3006"
     networks:
