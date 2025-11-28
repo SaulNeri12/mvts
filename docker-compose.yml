@@ -53,7 +53,7 @@ services:
       - CONSUL_HOST=consul-server
       - CONSUL_PORT=8500
       - SERVICE_NAME=vehiculos-service
-      - SERVICE_PORT=3050
+      - SERVICE_PORT=3000
       - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/vehiculos?authSource=admin
     ports:
       - "3000:3000"
