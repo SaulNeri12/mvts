@@ -1,6 +1,8 @@
 from config.consul import start_consul_connection
 from config.rabbitmq import start_rabbit, publish_message, create_fanout_exchange, create_queue_and_bind
 
+from service import vehiculos_service
+
 from dotenv import load_dotenv
 import time
 import os
@@ -21,6 +23,8 @@ def main():
     create_queue_and_bind(posiciones_vehiculos_queue, telemetria_service_exchange)
 
     print("[*] Telemetry service is running...")
+
+    #vehiculos_service.get_all()
 
     # Simulación de trabajo del servicio
     while True:
