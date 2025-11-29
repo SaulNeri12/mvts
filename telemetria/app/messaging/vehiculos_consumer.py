@@ -1,6 +1,7 @@
 from config.rabbitmq import start_consumer
 
-from service import vehiculos_service
+from service import vehiculos_service, rutas_service
+
 from store import vehiculos_store
 from model.vehiculo import Vehiculo
 
@@ -13,11 +14,27 @@ load_dotenv()
 #estados_semaforos_queue     = os.getenv("COLA_ESTADO_SEMAFOROS", "cambio_estado_semaforo")
 
 def init():
+    RUTA = rutas_service.get_ruta() 
+    
     vehiculos = vehiculos_service.get_all()
     for v in vehiculos:
-        veh_memory = Vehiculo(v["code"])
+        veh_memory = Vehiculo(
+            codigo=v["code"], 
+            current_segment_index=0, 
+            current_point_index=0
+        )
+        
+        try:
+            initial_point = RUTA[0]["tramo"][0]
+            veh_memory.posicion = {
+                'latitude': initial_point["latitude"],
+                'longitude': initial_point["longitude"]
+            }
+        except IndexError:
+            print("[!] Advertencia: RUTA está vacía o mal formada. No se asignó posición inicial.")
+            
         vehiculos_store.agregar_vehiculo(veh_memory)
-
+        
     print(vehiculos_store.obtener_todos())
 
 
