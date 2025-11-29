@@ -8,6 +8,11 @@ const QUEUE_NAME = 'cambio_estado_semaforo';
 let channel;
 let connection;
 
+/**
+ * sirve para dirigir los eventos al servicio de telemetria
+ */
+const TELEMETRIA_EXCHANGE_NAME = process.env.EXCHANGE_TELEMETRIA_SERVICE || 'telemetria_service';
+
 async function connectRabbit() {
     const amqpUrl = `amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:5672`;
     
@@ -17,7 +22,9 @@ async function connectRabbit() {
             channel = await connection.createChannel();
             
             // Asegura que la cola exista
-            await channel.assertQueue(QUEUE_NAME, { durable: true });
+            //await channel.assertQueue(QUEUE_NAME, { durable: true });
+
+            await channel.assertExchange(TELEMETRIA_EXCHANGE_NAME, 'fanout', { durable: true });
 
             console.log(`Conexión a RabbitMQ y cola '${QUEUE_NAME}' lista.`);
             return;
@@ -39,8 +46,10 @@ function publishStateChange(id, estado) {
     });
 
     try {
-        channel.sendToQueue( 
-            QUEUE_NAME,
+        // publica mensajes al exchange, no a una cola...
+        channel.publish(
+            TELEMETRIA_EXCHANGE_NAME,
+            '',
             Buffer.from(message),
             { persistent: true } 
         );

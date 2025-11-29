@@ -74,10 +74,12 @@ def start_consumer(queue_name, callback):
         try:
             channel.queue_declare(queue=queue_name, durable=True)
 
+            channel.basic_qos(prefetch_count=1)
+
             channel.basic_consume(
                 queue=queue_name,
                 on_message_callback=callback,
-                auto_ack=True
+                auto_ack=False
             )
 
             print(f"[!] Consumidor escuchando {queue_name}")
