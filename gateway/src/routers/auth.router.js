@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const rateLimit = require('express-rate-limit');
-const authenticateToken = require('../middlewares/auth.middleware');
+const authenticateToken = require('../middlewares/token.middleware');
 const userController = require('../controllers/users.controller');
 
 
