@@ -1,7 +1,7 @@
-def get_all():
-    ruta = [
+
+RUTA = [
         {
-            "semaforo": {"codigo": "247498", "estado": "verde"},
+            "semaforo": {"codigo": "247498" },
             "tramo": [
                 {
                     "latitude": "30.96929202950341",
@@ -61,7 +61,7 @@ def get_all():
             ],
         },
         {
-            "semaforo": {"codigo": "19040042", "estado": "verde"},
+            "semaforo": {"codigo": "19040042" },
             "tramo": [
                 {
                     "latitude": "30.97278024833265",
@@ -211,3 +211,27 @@ def get_all():
             ],
         },
     ]
+
+
+def get_ruta(numero: int = 0):
+    numero = 0 # por mientras para siempre...
+    return RUTA
+
+def get_tramo(ruta: int = 0, numero_tramo: int = 0):
+    ruta = 0 # por mientras para siempre
+    try:
+        tramo = RUTA[numero_tramo]
+        
+        if tramo is None:
+            print(f"[!] El tramo existe pero su valor es None (tramo_num: {numero_tramo})")
+            return None
+            
+        return tramo
+            
+    except IndexError:
+        print(f"[!] El índice está fuera de rango (tramo_num: {numero_tramo})")
+        return None
+        
+    except Exception as e:
+        print(f"[!] Error inesperado al obtener tramo: {type(e).__name__} - {e}")
+        return None
