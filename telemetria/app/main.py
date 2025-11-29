@@ -25,8 +25,8 @@ def main():
 
     print("[*] Telemetry service is running...")
 
-    #vehiculos_service.get_all()
-    #semaforos_service.get_all()
+    vehiculos_service.get_all()
+    semaforos_service.get_all()
 
     # Simulación de trabajo del servicio
     while True:

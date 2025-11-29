@@ -1,0 +1,218 @@
+[
+    {
+        "semaforo": {
+            "codigo": "247498",
+            "estado": "verde"
+        },
+        "tramo": [
+            {
+                "latitude": "30.96929202950341",
+                "longitude": "-110.3479719981113",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96954047737034",
+                "longitude": "-110.3474849875394",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96991296914381",
+                "longitude": "-110.3473521125499",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.9703454337356",
+                "longitude": "-110.3473209106233",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97084028050587",
+                "longitude": "-110.3472963292157",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97145674298604",
+                "longitude": "-110.3473887453606",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97194935808018",
+                "longitude": "-110.3476405953304",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97213239385307",
+                "longitude": "-110.3481668423873",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97227345381984",
+                "longitude": "-110.3487168778447",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97245533855628",
+                "longitude": "-110.3493714506431",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97278193437844",
+                "longitude": "-110.3498164886488",
+                "is_occupied": False
+            }
+        ]
+    },
+    {
+        "semaforo": {
+            "codigo": "19040042",
+            "estado": "verde"
+        },
+        "tramo": [
+            {
+                "latitude": "30.97278024833265",
+                "longitude": "-110.3504071944602",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97274750225728",
+                "longitude": "-110.3510881215609",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97267161862426",
+                "longitude": "-110.3519269959114",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97249730534276",
+                "longitude": "-110.3529716226869",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97212379438866",
+                "longitude": "-110.3535971089093",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97168432062202",
+                "longitude": "-110.3542651459929",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.9712765722527",
+                "longitude": "-110.3549365656487",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.97045423861443",
+                "longitude": "-110.3554821264301",
+                "is_occupied": False
+            }
+        ]
+    },
+    {
+        "semaforo": None,
+        "tramo": [
+            {
+                "latitude": "30.9692866660163",
+                "longitude": "-110.355977576714",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96855305633482",
+                "longitude": "-110.3561615375567",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96783464270403",
+                "longitude": "-110.3562137906476",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96705250502717",
+                "longitude": "-110.356362448605",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96645313357994",
+                "longitude": "-110.3566598049167",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96596832323282",
+                "longitude": "-110.3570757789918",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96551580478822",
+                "longitude": "-110.357453243179",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96489756562839",
+                "longitude": "-110.3579321605819",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96423198356678",
+                "longitude": "-110.3585048516085",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96382215643752",
+                "longitude": "-110.3589992162255",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96343015980148",
+                "longitude": "-110.3595851382509",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96315949520596",
+                "longitude": "-110.3601616852359",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96290467928792",
+                "longitude": "-110.3607200921683",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96293316861802",
+                "longitude": "-110.3613169449933",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96306343659645",
+                "longitude": "-110.3620524505372",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96313296310242",
+                "longitude": "-110.3626516705529",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96313545302511",
+                "longitude": "-110.3631137767247",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96306429872676",
+                "longitude": "-110.3636511309726",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96283092718509",
+                "longitude": "-110.3642338296903",
+                "is_occupied": False
+            },
+            {
+                "latitude": "30.96250175120804",
+                "longitude": "-110.3647827275836",
+                "is_occupied": False
+            }
+        ]
+    }
+]

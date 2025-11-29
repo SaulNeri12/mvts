@@ -5,8 +5,8 @@ const SemaforoSchema = new mongoose.Schema({
     code: { type: String, required: true, unique: true},
     description: { type: String, required: true },
     position: {
-        latitude: { type: Number, required: true },
-        longitude: { type: Number, required: true }
+        latitude: { type: String, required: true },
+        longitude: { type: String, required: true }
     },
 });
 
