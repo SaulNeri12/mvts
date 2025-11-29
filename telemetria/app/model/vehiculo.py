@@ -5,11 +5,9 @@ class Vehiculo():
     def __init__(
         self, 
         codigo: str = "", 
-        ubicacion: dict = None, 
-        velocidad: float = 0.0, 
-        ubicacion_anterior: dict = None
+        posicion: dict = None, 
+        velocidad: float = 0.0
     ):
         self.codigo = codigo
-        self.ubicacion = ubicacion or {}
+        self.posicion = posicion or {}
         self.velocidad = velocidad
-        self.ubicacion_anterior = ubicacion_anterior or {}
