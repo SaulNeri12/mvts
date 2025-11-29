@@ -10,16 +10,15 @@ import os
 
 load_dotenv() 
 
-estados_semaforos_queue     = os.getenv("COLA_ESTADO_SEMAFOROS", "cambio_estado_semaforo")
+ESTADOS_SEMAFOROS_QUEUE    = os.getenv("COLA_ESTADO_SEMAFOROS", "queue.cambio.estados.semaforos")
 
 def init():
     semaforos = semaforos_service.get_all()
     for sem in semaforos:
         memory_sem = Semaforo(sem["code"], "none")
         semaforos_store.agregar_semaforo(memory_sem)
-    print(f"[rabbitMQ] consumiento eventos de: {estados_semaforos_queue}")
-    start_consumer(estados_semaforos_queue, cb_estados_semaforos_consumer)
-
+    print(f"[rabbitMQ] consumiento eventos de: {ESTADOS_SEMAFOROS_QUEUE}")
+    start_consumer(ESTADOS_SEMAFOROS_QUEUE, cb_estados_semaforos_consumer)
 
 
 def cb_estados_semaforos_consumer(ch, method, properties, body):
