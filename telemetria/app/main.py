@@ -7,6 +7,8 @@ from config.rabbitmq import (
     create_queue_and_bind
 )
 
+from worker.conduccion_worker import conduccion_worker_loop
+
 from messaging import semaforos_consumer, vehiculos_consumer
 
 from service import rutas_service
@@ -62,14 +64,23 @@ def main():
         daemon=True
     )
     
+    semaforos_thread.start()
+    
     vehiculos_thread = threading.Thread(
         target=vehiculos_consumer.init, 
         name="Consumer-Vehiculos", 
         daemon=True
     )
-
-    semaforos_thread.start()
-    vehiculos_thread.start() 
+    
+    vehiculos_thread.start()
+    
+    conduccion_thread = threading.Thread(
+        target=conduccion_worker_loop,
+        name="Conduccion-Worker",
+        daemon=True
+    )
+    
+    conduccion_thread.start()
 
     #print(rutas_service.get_tramo(0))
 
