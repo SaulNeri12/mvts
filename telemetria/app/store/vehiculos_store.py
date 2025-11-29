@@ -6,6 +6,10 @@ import threading
 vehiculos = []
 vehiculos_lock = threading.Lock()
 
+def obtener_todos():
+    with vehiculos_lock:
+        return vehiculos
+
 def agregar_vehiculo(vehiculo: Vehiculo):
     """Agrega un nuevo vehiculo al sistema para localizarlo en tiempo real.
 

@@ -11,3 +11,10 @@ class Vehiculo():
         self.codigo = codigo
         self.posicion = posicion or {}
         self.velocidad = velocidad
+    
+    def __repr__(self):
+        return f"Vehiculo(codigo='{self.codigo}', posicion='{self.posicion}')"
+
+    def __str__(self):
+        # Para usuarios: Representación amigable.
+        return f"Vehiculo(codigo='{self.codigo}', posicion='{self.posicion}')"
