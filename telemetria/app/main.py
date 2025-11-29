@@ -9,6 +9,8 @@ from config.rabbitmq import (
 
 from messaging import semaforos_consumer, vehiculos_consumer
 
+from service import rutas_service
+
 from dotenv import load_dotenv
 import threading
 import time
@@ -68,6 +70,8 @@ def main():
 
     semaforos_thread.start()
     vehiculos_thread.start() 
+
+    #print(rutas_service.get_tramo(0))
 
     print("[*] Telemetry service is running...")
 
