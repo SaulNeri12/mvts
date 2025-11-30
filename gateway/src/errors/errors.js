@@ -18,6 +18,12 @@ class UnauthorizedError extends AppError {
   }
 }
 
+class RepositoryError extends AppError {
+  constructor(message = 'Error en base de datos') {
+    super(message, 401);
+  }
+}
+
 class ConflictError extends AppError {
   constructor(message = 'Conflicto') {
     super(message, 409);
@@ -29,5 +35,6 @@ module.exports = {
   NotFoundError,
   ValidationError,
   UnauthorizedError,
+  RepositoryError,
   ConflictError
 };
