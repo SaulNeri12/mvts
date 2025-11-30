@@ -18,7 +18,7 @@ class RateLimiter {
     return RateLimiter.create({
       max: 20,
       windowMs: 60 * 1000,
-      message: 'Límite alcanzado en rutas públicas',
+      message: 'Límite de peticiones alcanzado intente en unos momentos.',
       keyGenerator: (req) => req.ip,
     });
   }
@@ -28,7 +28,7 @@ class RateLimiter {
     return RateLimiter.create({
       max: 200,
       windowMs: 60 * 1000,
-      message: 'Límite alcanzado en rutas privadas',
+      message: 'Límite de peticiones alcanzado intente en unos momentos.',     
       keyGenerator: (req) => req.user?.id || req.ip
     });
   }
