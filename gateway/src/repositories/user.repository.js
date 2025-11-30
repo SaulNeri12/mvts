@@ -13,7 +13,7 @@ exports.getUserById = async (userId) =>
     }
     catch(error)
     {
-        console.log("Error al intentar obtener el usuario", error.message);
+        console.log(`An error ocurred while getting the user: ${userId}: `, error.message);
         throw new Error();
     }
 }
