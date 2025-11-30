@@ -142,7 +142,12 @@ function hashLastRefreshToken(lastRefreshToken){
   return crypto.createHash("sha256").update(lastRefreshToken).digest("hex");
 }
 
-// Save the new refresh token hash in the database
+/**
+ * Save the new refresh token hash in the database
+ * @param {Object} user user payload
+ * @param {String} refreshToken previus refresh token
+ * @param {*} newRefreshToken new refresh token
+ */
 async function saveNewRefreshTokenHash(user, refreshToken, newRefreshToken){
   // Hashing the las refresh token for search in data base
     const lastRefreshToken = hashLastRefreshToken(refreshToken);
