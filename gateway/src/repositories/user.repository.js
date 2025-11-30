@@ -1,4 +1,5 @@
 const userModel = require('../models/user.model');
+const {RepositoryError} = require('../errors/errors')
 
 /**
  * Find a user by the id given in the parameter.
@@ -14,6 +15,6 @@ exports.getUserById = async (userId) =>
     catch(error)
     {
         console.log(`An error ocurred while getting the user: ${userId}: `, error.message);
-        throw new Error();
+        throw new RepositoryError();
     }
 }

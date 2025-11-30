@@ -1,6 +1,5 @@
 const sessionModel = require('../models/session.model');
-
-// ---- USER QUERIES ----
+const {RepositoryError} = require('../errors/errors')
 
 /**
  * Find a user by the id given in the parameter.
@@ -13,7 +12,7 @@ exports.findSessionByUserId = async (userId) =>
   }
   catch(error){
     console.log(error.message);
-    throw new Error();
+    throw new RepositoryError();
   }
 }
 
@@ -26,20 +25,26 @@ exports.findSessionByUserId = async (userId) =>
  */
 exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToken) => 
 {
-  const session = await sessionModel.findOne({ userId });
-  if (!session) return null;
+  try{
+    const session = await sessionModel.findOne({ userId });
+    if (!session) return null;
 
-  // Deletes the last refresh token
-  session.refreshTokens = session.refreshTokens.filter(
-    t => t.hashedRefreshToken !== lastRefreshToken
-  );
+    // Deletes the last refresh token
+    session.refreshTokens = session.refreshTokens.filter(
+      t => t.hashedRefreshToken !== lastRefreshToken
+    );
 
-  // Add new refresh token
-  session.refreshTokens.push({ hashedRefreshToken: newRefreshToken });
-  session.lastConnection = new Date();
+    // Add new refresh token
+    session.refreshTokens.push({ hashedRefreshToken: newRefreshToken });
+    session.lastConnection = new Date();
 
-  await session.save();
-  return session;
+    await session.save();
+    return session;
+  }
+  catch(error){
+    console.log(error.message);
+    throw new RepositoryError();
+  }
 }
 
 /**
@@ -50,15 +55,21 @@ exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToke
  */
 exports.addNewRefreshTokenHash = async (userId, refreshToken) => 
 {
-  const session = await sessionModel.findOne({'userId': userId });
-  if (!session) return null;
+  try{
+    const session = await sessionModel.findOne({'userId': userId });
+    if (!session) return null;
 
-  // Add new refresh token
-  session.refreshTokens.push({ hashedRefreshToken: refreshToken });
-  session.lastConnection = new Date();
+    // Add new refresh token
+    session.refreshTokens.push({ hashedRefreshToken: refreshToken });
+    session.lastConnection = new Date();
 
-  await session.save();
-  return session;
+    await session.save();
+    return session;
+  }
+  catch(error){
+    console.log(error.message);
+    throw new RepositoryError();
+  }
 }
 
 /**
@@ -70,12 +81,18 @@ exports.addNewRefreshTokenHash = async (userId, refreshToken) =>
  */
 exports.validateRefreshTokenMatch = async (userId, refreshToken) => 
 {
-  const session = await sessionModel.findOne({ userId });
-  if (!session) return false;
+  try{
+    const session = await sessionModel.findOne({ userId });
+    if (!session) return false;
 
-  return session.refreshTokens.some(
-    t => t.hashedRefreshToken === refreshToken
-  );
+    return session.refreshTokens.some(
+      t => t.hashedRefreshToken === refreshToken
+    );
+  }
+  catch(error){
+    console.log(error.message);
+    throw new RepositoryError();
+  }
 }
 
 /**
@@ -88,22 +105,28 @@ exports.validateRefreshTokenMatch = async (userId, refreshToken) =>
  */
 exports.updateAccesTokenHash = async (userId, lastRefreshToken, newRefreshToken) => 
 {
-  const session = await sessionModel.findOne({ userId });
-  if (!session) return null;
+  try{
+    const session = await sessionModel.findOne({ userId });
+    if (!session) return null;
 
-  const tokenObj = session.refreshTokens.find(
-    t => t.hashedRefreshToken === lastRefreshToken
-  );
+    const tokenObj = session.refreshTokens.find(
+      t => t.hashedRefreshToken === lastRefreshToken
+    );
 
-  if (!tokenObj) return null;
+    if (!tokenObj) return null;
 
-  tokenObj.hashedRefreshToken = newRefreshToken;
-  tokenObj.createdAt = new Date();
+    tokenObj.hashedRefreshToken = newRefreshToken;
+    tokenObj.createdAt = new Date();
 
-  session.lastConnection = new Date();
-  await session.save();
+    session.lastConnection = new Date();
+    await session.save();
 
-  return session;
+    return session;
+  }
+  catch(error){
+    console.log(error.message);
+    throw new RepositoryError();
+  }
 }
 
 /**
@@ -118,6 +141,7 @@ exports.getNumbreOfSessions = async (userId) =>
   }
   catch(error){
     console.log(error.message)
+    throw new RepositoryError();
   }
 }
 
@@ -128,15 +152,21 @@ exports.getNumbreOfSessions = async (userId) =>
  */
 exports.singleLogout = async (userId, refreshToken) => 
 {
-  const session = await sessionModel.findOne({ userId });
-  if (!session) return null;
+  try{
+    const session = await sessionModel.findOne({ userId });
+    if (!session) return null;
 
-  session.refreshTokens = session.refreshTokens.filter(
-    t => t.hashedRefreshToken !== refreshToken
-  );
+    session.refreshTokens = session.refreshTokens.filter(
+      t => t.hashedRefreshToken !== refreshToken
+    );
 
-  await session.save();
-  return session;
+    await session.save();
+    return session;
+  }
+  catch(error){
+    console.log(error.message);
+    throw new RepositoryError();
+  }
 }
 
 /**
@@ -145,12 +175,18 @@ exports.singleLogout = async (userId, refreshToken) =>
  */
 exports.incrementTokenVersion = async (userId) => 
 {
-  const session = await sessionModel.findOneAndUpdate(
-    { userId },
-    { $inc: { tokenVersion: 1 }, $set: { refreshTokens: [] } }, // vacía los tokens
-    { new: true }
-  );
-  return session;
+  try{
+    const session = await sessionModel.findOneAndUpdate(
+      { userId },
+      { $inc: { tokenVersion: 1 }, $set: { refreshTokens: [] } }, // vacía los tokens
+      { new: true }
+    );
+    return session;
+  }
+  catch(error){
+    console.log(error.message);
+    throw new RepositoryError();
+  }
 }
 
 /**
@@ -160,6 +196,12 @@ exports.incrementTokenVersion = async (userId) =>
  */
 exports.getTokenVersion = async (userId) => 
 {
-  const session = await sessionModel.findOne({ userId });
-  return session ? session.tokenVersion : null;
+  try{
+    const session = await sessionModel.findOne({ userId });
+    return session ? session.tokenVersion : null;
+  }
+  catch(error){
+    console.log(error.message);
+    throw new RepositoryError();
+  }
 }
