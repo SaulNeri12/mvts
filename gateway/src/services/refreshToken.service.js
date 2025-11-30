@@ -54,7 +54,6 @@ function decodeSession(refreshToken)
 {
   try{
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    console.log("decoded session: ", decoded);
     return decoded;
   }
   catch(error){
