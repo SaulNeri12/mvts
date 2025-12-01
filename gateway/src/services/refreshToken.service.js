@@ -14,16 +14,16 @@ const {
 
 
 /**
- * Verifica el refresh token y genera un nuevo par de tokens (access + refresh).
- * @param {string} refreshToken - El refresh token proporcionado por el cliente.
- * @returns {Object} - Un objeto que contiene el nuevo access token y refresh token.
- * @throws {Error} - Si el refresh token es inválido, ha expirado, o no coincide con el hash almacenado.
+ * Verify the refresh token and generates a new one pair of tokens (access and refresh).
+ * @param {string} refreshToken - The refresh token given by the client.
+ * @returns {Object} - A new object with the new refresh and acces token
+ * @throws {Error} - If the refresh token is not valid, has expired or doesnt match with 
+ * the stored refresh token hash
  */
 async function refreshAccessToken(refreshToken) {
   try {
-    if (!refreshToken) {
-      throw new Error("Missing refresh token");
-    }
+    validateToken(refreshToken)
+
     const decodedSession = decodeSession(refreshToken);
     validateSession(decodedSession) // validate decoded session
 
@@ -41,15 +41,22 @@ async function refreshAccessToken(refreshToken) {
     const newRefreshToken = generateRefreshToken(storedSession);
 
     // Saves the new refresh token hash in the database
-    await saveNewRefreshTokenHash(storedSession, refreshToken, newRefreshToken)
+    await saveNewRefreshTokenHash(decodedSession, refreshToken, newRefreshToken)
 
     // Returns both tokens
     return {
-      access_token: newAccessToken,
-      refresh_token: newRefreshToken,
+      access: newAccessToken,
+      refresh: newRefreshToken
     };
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
+  }
+}
+
+function validateToken(refreshToken)
+{
+  if (!refreshToken) {
+    throw new ValidationError("Missing refresh token");
   }
 }
 
@@ -61,7 +68,6 @@ async function refreshAccessToken(refreshToken) {
 function decodeSession(refreshToken)
 {
   const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-  if(!decoded) throw new UnauthorizedError('Token erroneo o expirado')
   return decoded;
 }
 
@@ -69,9 +75,10 @@ function decodeSession(refreshToken)
  * Validate if the decoded session is not null.
  * @param {*} decodedSession 
  */
-function validateSession(decodedSession){
+function validateSession(decodedSession)
+{
     if(!decodedSession){
-      throw new Error('Token erroneo o expirado - acceso revocado');
+      if(!decoded) throw new UnauthorizedError('Token erroneo o expirado');
     } 
 }
 
@@ -82,10 +89,13 @@ function validateSession(decodedSession){
  */
 function findSessionByUserId(userId){
     try{
-      return sessionRepository.findBySessionId(userId);
+      return sessionRepository.findSessionByUserId(userId);
     }
     catch(error){
-        throw new Error("No se pudo refrescar el token de acceso");
+      if (error instanceof RepositoryError) {
+        throw new InternalError('Error interno del servidor, intente más tarde');
+      }
+      throw error;
     }
 }
 
@@ -96,8 +106,8 @@ function findSessionByUserId(userId){
  */
 function verifyTokenVersionMatch(decodeUser, storedUser){
    if (decodeUser.tokenVersion !== storedUser.tokenVersion) {
-    throw new Error(
-      "Las versiones de los tokens no coinciden - acceso revocado"
+    throw new UnauthorizedError(
+      "Las versiones de los tokens no coinciden"
     );
   }
 }
@@ -110,7 +120,7 @@ function verifyTokenVersionMatch(decodeUser, storedUser){
 function verifyHashMatch(refreshToken, user){
     const incomingHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
     if(!sessionRepository.validateRefreshTokenMatch(user.id, incomingHash)){
-      throw new Error('El token enviado no es valido - acceso revocado');
+      throw new UnauthorizedError('El token enviado no es valido');
     }
 }
 
@@ -140,10 +150,6 @@ function generateRefreshToken(user) {
   );
 }
 
-function hashLastRefreshToken(lastRefreshToken){
-  return crypto.createHash("sha256").update(lastRefreshToken).digest("hex");
-}
-
 /**
  * Save the new refresh token hash in the database
  * @param {Object} user user payload
@@ -153,12 +159,15 @@ function hashLastRefreshToken(lastRefreshToken){
 async function saveNewRefreshTokenHash(user, refreshToken, newRefreshToken){
   // Hashing the las refresh token for search in data base
   try{
-    const lastRefreshToken = hashLastRefreshToken(refreshToken);
+    const lastRefreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
     const newRefreshTokenHash = crypto.createHash("sha256").update(newRefreshToken).digest("hex");
-    await sessionRepository.updateRefreshTokenHash(user.id, lastRefreshToken, newRefreshTokenHash);
+    await sessionRepository.updateRefreshTokenHash(user.userId, lastRefreshTokenHash, newRefreshTokenHash);
   }
   catch(error){
-
+    if (error instanceof RepositoryError) {
+      throw new InternalError('Error interno del servidor, intente más tarde');
+    }
+    throw error;
   }
 }
 

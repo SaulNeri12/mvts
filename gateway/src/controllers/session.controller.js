@@ -11,9 +11,9 @@ const refreshTokenService = require('../services/refreshToken.service');
 exports.handleTokenRefresh = async (req, res, next) => 
 {
     try {
-        const { refresh_token } = req.body;
-        const newAccessToken =  await refreshTokenService.refreshAccessToken(refresh_token);
-        res.status(200).json({ accessToken: newAccessToken });
+        const { refresh_token } = req.body;;
+        const newTokens =  await refreshTokenService.refreshAccessToken(refresh_token);
+        res.status(200).json({ tokens: newTokens });
     } 
     catch (error) {
         next(error);
