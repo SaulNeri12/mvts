@@ -9,13 +9,15 @@ const userPrivateRouter = require('./src/routers/private/session.router');
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
-app.use(errorHandler); // Middleware to handle custom errorsnode
 
 //public routes
 app.use('/user', userPublicRouter);
 
 //private routes
 app.use('/user', userPrivateRouter);
+
+//Internal middlewares
+app.use(errorHandler); // Middleware to handle custom errorsnode
 
 const PORT = process.env.SERVICE_PORT;
 const SERVICE_NAME = process.env.SERVICE_NAME;
