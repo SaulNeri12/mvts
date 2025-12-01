@@ -60,9 +60,9 @@ exports.handleAuthentication = async(req, res, next) =>
 exports.handleVerifySessionStatus = async(req, res, next) =>
 {
   try {
-    const { user_id, refresh_token } = req.body;
-    const result = await verifySessionStatusService.verifySessionStatus(user_id, refresh_token);
-    res.status(200).json(result);
+    const {refresh_token } = req.body;
+    await verifySessionStatusService.verifySessionStatus(refresh_token);
+    res.status(200).json();
   } 
   catch (error) {
     next(error);
