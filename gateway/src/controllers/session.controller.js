@@ -1,7 +1,6 @@
 const authService = require('../services/auth.service');
 const logoutService = require('../services/logout.service')
 const refreshTokenService = require('../services/refreshToken.service');
-const sessionRepository = require('../repositories/session.repository');
 
 /**
  * Controller function to handle token refresh requests.
