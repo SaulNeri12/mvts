@@ -1,6 +1,7 @@
 require("dotenv").config();
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const { JsonWebTokenError } = require('jsonwebtoken');
 const sessionRepository = require('../repositories/session.repository');
 
 const {
@@ -67,8 +68,16 @@ function validateToken(refreshToken)
  */
 function decodeSession(refreshToken)
 {
-  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-  return decoded;
+  try{
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    return decoded;
+  }
+  catch(error){
+    if (error instanceof JsonWebTokenError) {
+      throw new UnauthorizedError('Token erroneo o expirado');
+    }
+    throw error;
+  }
 }
 
 /**
