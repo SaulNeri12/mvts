@@ -1,6 +1,7 @@
 const authService = require('../services/auth.service');
 const logoutService = require('../services/logout.service')
 const refreshTokenService = require('../services/refreshToken.service');
+const verifySessionStatusService = require('../services/verifySessionStatus.service');
 
 /**
  * Controller function to handle token refresh requests.
@@ -55,5 +56,18 @@ exports.handleAuthentication = async(req, res, next) =>
     next(error);
   }
 } 
+
+exports.handleVerifySessionStatus = async(req, res, next) =>
+{
+  try {
+    const { user_id, refresh_token } = req.body;
+    const result = await verifySessionStatusService.verifySessionStatus(user_id, refresh_token);
+    res.status(200).json(result);
+  } 
+  catch (error) {
+    next(error);
+  }
+} 
+
 
 
