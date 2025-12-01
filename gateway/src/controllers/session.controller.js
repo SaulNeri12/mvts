@@ -1,5 +1,6 @@
-const refreshTokenService = require('../services/refreshToken.service');
 const authService = require('../services/auth.service');
+const logoutService = require('../services/logout.service')
+const refreshTokenService = require('../services/refreshToken.service');
 const sessionRepository = require('../repositories/session.repository');
 
 /**
@@ -31,7 +32,7 @@ exports.handleLogout = async (req, res, next) =>
 {
     const { user_id, refresh_token } = req.body;
     try {
-        await sessionRepository.singleLogout(user_id, refresh_token);
+        await logoutService.singleLogout(user_id, refresh_token);
         res.status(200).json();
     } catch (error) {
         next(error);
