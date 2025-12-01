@@ -11,8 +11,8 @@ const sessionRepository = require('../repositories/session.repository');
 exports.handleTokenRefresh = async (req, res, next) => 
 {
     try {
-        const { refreshToken } = req.body;
-        const newAccessToken =  await refreshTokenService.refreshAccessToken(refreshToken);
+        const { refresh_token } = req.body;
+        const newAccessToken =  await refreshTokenService.refreshAccessToken(refresh_token);
         res.status(200).json({ accessToken: newAccessToken });
     } 
     catch (error) {
@@ -27,11 +27,11 @@ exports.handleTokenRefresh = async (req, res, next) =>
  * @param {Object} res Response object.
  * @param {Object} next Middlware object.
  */
-exports.handleLogout = async (req, res, next) => 
+exports.handleLogout = async (req, res, next) =>
 {
-    const { user_id } = req.body;
+    const { user_id, refresh_token } = req.body;
     try {
-        await sessionRepository.singleLogout(user_id);
+        await sessionRepository.singleLogout(user_id, refresh_token);
         res.status(200).json();
     } catch (error) {
         next(error);
@@ -44,7 +44,7 @@ exports.handleLogout = async (req, res, next) =>
  * @param {Object} res Response object.
  * @param {Object} next Middlware object.
  */
-exports.handleAuthentication = async(req, res, next) => 
+exports.handleAuthentication = async(req, res, next) =>
 {
   try {
     const { user_id, password } = req.body;

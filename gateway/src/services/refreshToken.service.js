@@ -1,7 +1,16 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const sessionRepository = require('../repositories/session.repository');
+
+const {
+      ValidationError,
+      RepositoryError,
+      UnauthorizedError,
+      TooManySessionsError,
+      NotFoundError,
+      InternalError
+    } = require('../errors/errors');
 
 
 /**
@@ -40,7 +49,6 @@ async function refreshAccessToken(refreshToken) {
       refresh_token: newRefreshToken,
     };
   } catch (error) {
-    console.error("Refresh token error:", error);
     throw new Error(error.message);
   }
 }
@@ -52,14 +60,9 @@ async function refreshAccessToken(refreshToken) {
  */
 function decodeSession(refreshToken)
 {
-  try{
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    return decoded;
-  }
-  catch(error){
-    console.log('Error decoding session: ', error.message);
-    throw new Error('Token erroneo o expirado - acceso revocado');
-  }
+  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  if(!decoded) throw new UnauthorizedError('Token erroneo o expirado')
+  return decoded;
 }
 
 /**
@@ -68,7 +71,6 @@ function decodeSession(refreshToken)
  */
 function validateSession(decodedSession){
     if(!decodedSession){
-      console.log('The decoded session is missing');
       throw new Error('Token erroneo o expirado - acceso revocado');
     } 
 }
@@ -150,9 +152,14 @@ function hashLastRefreshToken(lastRefreshToken){
  */
 async function saveNewRefreshTokenHash(user, refreshToken, newRefreshToken){
   // Hashing the las refresh token for search in data base
+  try{
     const lastRefreshToken = hashLastRefreshToken(refreshToken);
     const newRefreshTokenHash = crypto.createHash("sha256").update(newRefreshToken).digest("hex");
     await sessionRepository.updateRefreshTokenHash(user.id, lastRefreshToken, newRefreshTokenHash);
+  }
+  catch(error){
+
+  }
 }
 
 module.exports = { refreshAccessToken };
