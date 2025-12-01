@@ -6,7 +6,7 @@ const {RepositoryError} = require('../errors/errors')
  * @param {String} userId 
  * @returns 
  */
-exports.getUserById = async (userId) => 
+exports.getUserById = async (userId) =>
 {
     try
     {

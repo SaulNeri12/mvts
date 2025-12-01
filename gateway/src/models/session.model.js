@@ -12,8 +12,27 @@ const RefreshTokenSchema = new mongoose.Schema({
 const SessionSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   tokenVersion: { type: Number, required: true },
-  lastConnection: { type: Date, required: true },
+  lastConnection: { type: Date, default: Date.now },
   refreshTokens: [RefreshTokenSchema]
+}, {
+  // keep versionKey (default) but hide __v when converting to JSON/Object
+  toJSON: {
+    virtuals: true,
+    transform(doc, ret) {
+      delete ret.__v;
+      // optional: rename _id to id
+      // ret.id = ret._id;
+      // delete ret._id;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform(doc, ret) {
+      delete ret.__v;
+    }
+  }
 });
+// ...existing code...
+module.exports = mongoose.model('Session', SessionSchema);
 
 module.exports = mongoose.model('Session', SessionSchema);

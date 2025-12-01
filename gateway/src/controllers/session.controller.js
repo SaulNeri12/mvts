@@ -1,6 +1,6 @@
 const refreshTokenService = require('../services/refreshToken.service');
 const authService = require('../services/auth.service');
-const sessionRepository = require('../repositories/session.repossitory');
+const sessionRepository = require('../repositories/session.repository');
 
 /**
  * Controller function to handle token refresh requests.
@@ -47,8 +47,8 @@ exports.handleLogout = async (req, res, next) =>
 exports.handleAuthentication = async(req, res, next) => 
 {
   try {
-    const { userId, password } = req.body;
-    const result = await authService.authenticateUser(userId, password);
+    const { user_id, password } = req.body;
+    const result = await authService.authenticateUser(user_id, password);
     res.status(200).json(result);
   } 
   catch (error) {

@@ -7,7 +7,7 @@ class RateLimiter {
       windowMs: options.windowMs || 60 * 1000,
       max: options.max || 100,
       message: options.message || 'Demasiadas solicitudes, intenta más tarde',
-      keyGenerator: options.keyGenerator || ((req) => req.ip),
+      //keyGenerator: options.keyGenerator || ((req) => req.ip),
       standardHeaders: true,
       legacyHeaders: false,
     });
@@ -19,7 +19,7 @@ class RateLimiter {
       max: 20,
       windowMs: 60 * 1000,
       message: 'Límite de peticiones alcanzado intente en unos momentos.',
-      keyGenerator: (req) => req.ip,
+      //keyGenerator: (req) => req.ip,
     });
   }
 
@@ -29,7 +29,7 @@ class RateLimiter {
       max: 200,
       windowMs: 60 * 1000,
       message: 'Límite de peticiones alcanzado intente en unos momentos.',     
-      keyGenerator: (req) => req.user?.id || req.ip
+      //keyGenerator: (req) => req.user?.id || req.ip
     });
   }
   

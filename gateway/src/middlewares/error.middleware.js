@@ -1,17 +1,17 @@
-const { AppError } = require('../errors');
+const AppError = require('../errors/app.error');
 
 function errorHandler(err, req, res, next) {
+
+  // Error personalizado
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      status: err.statusCode,
-      error: err.message
-    });
+    console.log('Hasta aqui llege')
+    return res.status(err.statusCode).json(err.message);
   }
 
-  return res.status(500).json({
-    status: 500,
-    error: 'Error interno del servidor'
-  });
+  // Error normal de Javascript o cualquier otro
+  console.error(err);
+
 }
 
 module.exports = errorHandler;
+

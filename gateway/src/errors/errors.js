@@ -1,4 +1,4 @@
-const AppError = require('./AppError');
+const AppError = require('../errors/app.error');
 
 class NotFoundError extends AppError {
   constructor(message = 'Recurso no encontrado') {
@@ -20,9 +20,22 @@ class UnauthorizedError extends AppError {
 
 class RepositoryError extends AppError {
   constructor(message = 'Error en base de datos') {
-    super(message, 401);
+    super(message, 500);
   }
 }
+
+class TooManySessionsError extends AppError {
+  constructor(message = 'Maximo de sesiones activas alcazado') {
+    super(message, 403);
+  }
+}
+
+class InternalError extends AppError {
+  constructor(message = 'Error en el servidor') {
+    super(message, 500);
+  }
+}
+
 
 class ConflictError extends AppError {
   constructor(message = 'Conflicto') {
@@ -36,5 +49,7 @@ module.exports = {
   ValidationError,
   UnauthorizedError,
   RepositoryError,
+  TooManySessionsError,
+  InternalError,
   ConflictError
 };
