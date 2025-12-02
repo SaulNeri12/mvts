@@ -2,11 +2,6 @@ const amqp = require('amqplib');
 
 /**
  * Lightweight RabbitMQ client with automatic reconnect and helper methods.
- * Usage:
- *   const rabbit = require('./rabbitClient');
- *   await rabbit.connect();
- *   const ch = rabbit.getChannel();
- *   rabbit.sendToQueue('my-queue', JSON.stringify({ foo: 1 }));
  */
 class RabbitClient {
   /**
