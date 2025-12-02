@@ -26,6 +26,7 @@ const SERVICE_NAME = process.env.SERVICE_NAME || 'gateway-service';
 
     setUpExternalMiddlewares();
     setUpSocketIO();
+    setUpRabbitMQConsumers();
     setUpPublicRoutes();
     setUpPrivateRoutes();
     setUpInternallMiddlewares();
@@ -60,6 +61,19 @@ function setUpSocketIO() {
 
   module.exports.io = io; // export the io object to be used in other modules
   console.log('Socket running');
+}
+
+function setUpRabbitMQConsumers(){
+  //const TelemetryConsumer = require('./src/infrestructure/consumer/telemetry.consumer');
+  //const AlertsConsumer = require('./src/infrestructure/consumer/alerts.consumer');
+  //const LightsConsumer = require('./src/infrestructure/consumer/lights.consumer');
+
+  //TelemetryConsumer.startConsuming();
+  //AlertsConsumer.startConsuming();
+  //LightsConsumer.startConsuming();
+
+  const telemetryController = require('./src/controllers/telemetry.controller');
+  telemetryController.handleTelemetryMessage();
 }
 
 function setUpPublicRoutes(){
