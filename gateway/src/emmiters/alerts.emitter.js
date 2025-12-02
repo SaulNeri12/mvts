@@ -1,4 +1,4 @@
-const {io} = require('../../server'); // Import the io instance
+const {getIO} = require('../config/socket.config'); // Import the io instance
 
 /**
  * Emit alerts update to connected clients via Socket.IO
@@ -6,7 +6,8 @@ const {io} = require('../../server'); // Import the io instance
  */
 exports.alertsUpdate = (alertData) => {
     try{
-        io.emit('alerts:update', alertData);
+        const io = getIO();
+        io.emit('alerts_update', alertData);
     }
     catch (error){
         console.log('Error emitting alerts update:', error);

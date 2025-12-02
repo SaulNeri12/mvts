@@ -3,6 +3,7 @@ const http = require('http');
 const cors = require('cors');
 const express = require('express');
 const socketio = require('socket.io');
+const { initSocket } = require('./src/config/socket.config');
 const connectDB = require('./src/config/mongo.config');
 const seedUsers = require('./src/utils/users.seeder');
 const seedSessions = require('./src/utils/session.seeder');
@@ -52,15 +53,7 @@ function setUpExternalMiddlewares() {
 }
 
 function setUpSocketIO() {
-  const io = socketio(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-  });
-
-  module.exports.io = io; // export the io object to be used in other modules
-  console.log('Socket running');
+  initSocket(server);
 }
 
 function setUpRabbitMQConsumers(){

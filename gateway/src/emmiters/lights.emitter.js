@@ -1,4 +1,4 @@
-const {io} = require('../../server'); // Import the io instance
+const {getIO} = require('../config/socket.config'); // Import the io instance
 
 /**
  * Emit telemetry update to connected clients via Socket.IO
@@ -6,7 +6,8 @@ const {io} = require('../../server'); // Import the io instance
  */
 exports.lightsUpdate = (lightData) => {
     try{
-        io.emit('lights:update', lightData);
+        const io = getIO();
+        io.emit('lights_update', lightData);
     }
     catch (error){
         console.log('Error emitting lights update:', error);
