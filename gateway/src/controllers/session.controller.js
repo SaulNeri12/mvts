@@ -57,6 +57,12 @@ exports.handleAuthentication = async(req, res, next) =>
   }
 } 
 
+/**
+ * Controller function to handle session status verification requests.
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ * @param {Object} next Middlware object. 
+ */
 exports.handleVerifySessionStatus = async(req, res, next) =>
 {
   try {

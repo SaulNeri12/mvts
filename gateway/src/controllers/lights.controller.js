@@ -4,7 +4,9 @@ const lightsClient = require('../infrestructure/client/lights.client');
 
 /**
  * Controller to handle incoming lights messages.
- * @param {String} message message received from lights queue
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ * @param {Object} next Middlware object.
  */
 exports.handleLightsMessage = async (message) => {
     try {
@@ -16,8 +18,9 @@ exports.handleLightsMessage = async (message) => {
 
 /**
  * Controller to handle taking manual control of a light.
- * @param {String} userId Users ID 
- * @param {String} lightId Light ID
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ * @param {Object} next Middlware object.
  */
 exports.handleTakeManualControl = async (req, res, next) => {
     try{
@@ -30,8 +33,9 @@ exports.handleTakeManualControl = async (req, res, next) => {
 
 /**
  * Controller to handle changing the state of a light.
- * @param {String} lightId Light ID
- * @param {String} newState Light new state
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ * @param {Object} next Middlware object.
  */
 exports.handleLightStateChange = async (req, res, next) => {
     try{
@@ -44,7 +48,9 @@ exports.handleLightStateChange = async (req, res, next) => {
 
 /**
  * Controller to retrieve all lights from lights service.
- * @returns Array with the lighsts
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ * @param {Object} next Middlware object.
  */
 exports.handleGetAllLights = async (req, res, next) => {
     try{
@@ -57,7 +63,9 @@ exports.handleGetAllLights = async (req, res, next) => {
 
 /**
  * Controller to handle releasing manual control of a light.
- * @param {String} lightId Light ID
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ * @param {Object} next Middlware object.
  */
 exports.handleReleaseManualControl = async (req, res, next) => {
     try{
