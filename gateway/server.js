@@ -1,5 +1,6 @@
 require('dotenv').config();
 const http = require('http');
+const cors = require('cors');
 const express = require('express');
 const socketio = require('socket.io');
 const connectDB = require('./src/config/mongo.config');
@@ -58,6 +59,7 @@ function setUpSocketIO() {
   });
 
   module.exports.io = io; // export the io object to be used in other modules
+  console.log('Socket running');
 }
 
 function setUpPublicRoutes(){
