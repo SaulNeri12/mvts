@@ -11,7 +11,10 @@ from datetime import datetime
 import json
 
 COLA_POSICIONES_VEHICULOS = "queue.telemetria.vehiculos.posiciones"
-TIME_STEP = 1
+
+VIAJES_COMPLETADOS_QUEUE = "queue.telemetria.vehiculos.viajes.completados"
+
+TIME_STEP = 1 # cada 3 segundos se muven los vehiculos...
 
 
 def move_vehicle_to_next_point(vehicle):
@@ -41,6 +44,22 @@ def move_vehicle_to_next_point(vehicle):
         else:
             print(f"[WORKER] Vehiculo {vehicle.codigo} completó la ruta.")
             vehicle.is_moving = False
+            print(f"Descargando {vehicle.carga} del vehiculo {vehicle.codigo}")
+            # TODO: vehiculo se le quita la carga
+            carga_recibida = vehicle.carga
+            vehicle.carga = {}
+            print(f"Carga actual {vehicle.codigo}:  {vehicle.carga}")
+
+            mensaje_viaje = {
+                'load': carga_recibida,
+                'vehicle': {
+                    'code': vehicle.codigo
+                },
+                'timestamp': datetime.now().isoformat()
+            }
+            
+            publish_message(VIAJES_COMPLETADOS_QUEUE, message=json.dumps(mensaje_viaje))
+        
             return None 
 
     vehicle.posicion = {
@@ -79,7 +98,6 @@ def vehicle_movement_worker(vehicle_code):
                         can_move = True
                     else:
                         can_move = False
-                        # 6. La variable codigo_semaforo ya está definida aquí
                         print(f"[WORKER] Vehiculo {vehicle_code} detenido. Semáforo {codigo_semaforo} en {estado}")
             if can_move:
                 new_position = move_vehicle_to_next_point(vehicle)

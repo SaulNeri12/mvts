@@ -1,3 +1,4 @@
+
 from model.vehiculo import Vehiculo
 
 from typing import Optional
