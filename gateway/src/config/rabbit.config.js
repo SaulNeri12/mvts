@@ -4,12 +4,13 @@ const amqp = require('amqplib');
  * Lightweight RabbitMQ client with automatic reconnect and helper methods.
  */
 class RabbitClient {
+
   /**
    * @param {String} uri AMQP connection string, defaults to `process.env.RABBIT_URL` or `amqp://localhost`
    * @param {Object} opts options: reconnectDelay (ms)
    */
-  constructor() {
-    this.uri = 'amqp://localhost';
+  constructor(uri) {
+    this.uri = uri;
     this.conn = null;
     this.channel = null;
     this.reconnectDelay = 5000;
@@ -79,14 +80,14 @@ class RabbitClient {
   /**
    * Create/ensure a queue and optionally bind it to an exchange
    */
-  async assertQueue(queue, opts = { durable: true }, exchange, routingKey) {
+  async assertQueue(queue, opts = { durable: true }, exchangeName, exchangeType, routingKey) {
     const ch = await this.getChannel();
     if (!ch) throw new Error('RabbitMQ channel not available');
     await ch.assertQueue(queue, opts);
     
-    if (exchange && routingKey) {
-      await ch.assertExchange(exchange, 'direct', { durable: true });
-      await ch.bindQueue(queue, exchange, routingKey);
+    if (exchangeName && routingKey) {
+      await ch.assertExchange(exchangeName, exchangeType, { durable: true });
+      await ch.bindQueue(queue, exchangeName, routingKey);
     }
     return true;
   }
