@@ -22,6 +22,9 @@ load_dotenv()
 EXCHANGE_POSICIONES_VEHICULOS = os.getenv("EXCHANGE_POSICIONES_VEHICULOS", "exchange.telemetria.vehiculos.posiciones")
 POSICIONES_VEHICULOS_QUEUE  = os.getenv("COLA_POSICIONES_VEHICULOS", "queue.telemetria.vehiculos.posiciones")
 
+EXCHANGE_VIAJES_COMPLETADOS = os.getenv("EXCHANGE_VIAJES_COMPLETADOS_VEHICULOS", "exchange.telemetria.vehiculos.viajes.completados")
+VIAJES_COMPLETADOS_QUEUE = os.getenv("VIAJES_COMPLETADOS_VEHICULOS_QUEUE", "queue.telemetria.vehiculos.viajes.completados")
+
 ESTADOS_SEMAFOROS_QUEUE    = os.getenv("COLA_ESTADO_SEMAFOROS", "queue.cambio.estados.semaforos")
 SEMAFOROS_ESTADO_EXCHANGE = os.getenv("EXCHANGES_SEMAFOROS_ESTADO", "exchange.semaforos.estado")
 
@@ -41,6 +44,7 @@ def init_exchanges_and_queues():
         # definimos las colas a escuchar.
         create_queue_and_bind(channel, ESTADOS_SEMAFOROS_QUEUE, SEMAFOROS_ESTADO_EXCHANGE)
         create_queue_and_bind(channel, POSICIONES_VEHICULOS_QUEUE, EXCHANGE_POSICIONES_VEHICULOS)
+        create_queue_and_bind(channel, VIAJES_COMPLETADOS_QUEUE, EXCHANGE_VIAJES_COMPLETADOS)
         
         print("[*] Configuración inicial de RabbitMQ terminada.")
         

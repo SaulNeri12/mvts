@@ -68,6 +68,7 @@ services:
       - consul
       - rabbitmq
       - vehiculos
+      - semaforos
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
@@ -79,6 +80,12 @@ services:
       - TTL_INTERVAL=10
       # colas de mensajeria
       - COLA_ESTADO_SEMAFOROS=cambio_estado_semaforo
+      - EXCHANGE_POSICIONES_VEHICULOS=exchange.telemetria.vehiculos.posiciones
+      - COLA_POSICIONES_VEHICULOS=queue.telemetria.vehiculos.posiciones
+      - EXCHANGE_VIAJES_COMPLETADOS_VEHICULOS=exchange.telemetria.vehiculos.viajes.completados
+      - VIAJES_COMPLETADOS_VEHICULOS_QUEUE=queue.telemetria.vehiculos.viajes.completados
+      - COLA_ESTADO_SEMAFOROS=queue.cambio.estados.semaforos
+      - EXCHANGES_SEMAFOROS_ESTADO=exchange.semaforos.estado
       # variables para peticiones HTTP (temporal)
       - VEHICULOS_SERVICE_HOST=http://vehiculos:3052
       - SEMAFOROS_SERVICE_HOST=http://semaforos:3050
