@@ -1,3 +1,4 @@
+
 from model.semaforo import Semaforo
 
 from typing import Optional
