@@ -1,4 +1,4 @@
-#Clase vehiculos_store.py
+
 from model.vehiculo import Vehiculo
 
 from typing import Optional

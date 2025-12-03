@@ -9,11 +9,12 @@ async function loadSemaforos() {
         const docs = await SemaforoModel.find().lean();
         
         docs.forEach(doc => {
-            const id = doc._id.toString();
-            const sem = new Semaforo(id);
+            //const id = doc._id.toString();
+            const code = doc.code.toString();
+            const sem = new Semaforo(code);
 
             // Almacena la instancia en el mapa
-            semaforos.set(id, sem);
+            semaforos.set(code, sem);
         });
 
         console.log(`${semaforos.size} semáforos cargados a memoria.`);
