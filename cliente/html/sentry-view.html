@@ -4,39 +4,32 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--Page tittle-->
     <title>Vista del trafico</title>
-    <!--Page icon-->
-    <link rel="icon" href="/Resources/logo.png" />
-
-    <!----======== CSS ======== -->
-    <link rel="stylesheet" href="/css/sentry-view.css" />
-    <link rel="stylesheet" href="/common/side-bar-commons.css" />
-    <link rel="stylesheet" href="/common/button-commons.css" />
-    <link rel="stylesheet" href="/common/input-commons.css" />
-    <link rel="stylesheet" href="/common/table-commons.css" />
+    <link rel="icon" href="/cliente/resources/logo.png" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="/cliente/css/sentry-view.css" />
+    <link rel="stylesheet" href="/cliente/common/side-bar-commons.css" />
+    <link rel="stylesheet" href="/cliente/common/button-commons.css" />
+    <link rel="stylesheet" href="/cliente/common/input-commons.css" />
+    <link rel="stylesheet" href="/cliente/common/table-commons.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> 
-
-    <!----===== Boxicons CSS ===== -->
+    <!-- Boxicons CSS -->
     <link
       href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css"
       rel="stylesheet"
     />
-
-    <!----===== Google icons ===== -->
+    <!-- Google icons -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&"
     />
-
-    <!--<title>Dashboard Sidebar Menu</title>-->
   </head>
   <body>
     <nav class="sidebar close">
       <header>
         <div class="image-text">
           <span class="image">
-            <img src="/resources/logo.png" alt="" />
+            <img src="/cliente/resources/logo.png" alt="" />
           </span>
           <div class="text logo-text">
             <span class="name">MVTS</span>
@@ -202,29 +195,6 @@
                     </button>
                     </td>
                 </tr>
-                <tr>
-                    <td>A-02</td>
-                    <td>V12345</td>
-                    <td><div id="light-state"></td>
-                    <!-- switch light state button -->
-                    <td>
-                    <button
-                        class="primary-button"
-                        title="Cambiar estado del semaforo"
-                    >
-                        Cambiar
-                    </button>
-                    </td>
-                    <!-- free light button -->
-                    <td>
-                    <button
-                        class="secondary-button-icon"
-                        title="Liberar control manual del semaforo"
-                    >
-                        <span class="material-symbols-outlined">lock_open_right</span>
-                    </button>
-                    </td>
-                </tr>
                 </tbody>
             </table>
             </div>
@@ -275,19 +245,6 @@
                     <button
                         class="disabled-button"
                         title="El semaforo ya esta en control manual"
-                    >
-                        Tomar control
-                    </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>A-04</td>
-                    <td>V54321</td>
-                    <td><div id="light-state"></div></td>
-                    <td>
-                    <button
-                        class="primary-button"
-                        title="Tomar control manual"
                     >
                         Tomar control
                     </button>
@@ -459,7 +416,7 @@
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <!-- Luego tu script -->
-    <script src="/Controllers/sentry-controller.js" type="module"></script>
-    <script src="/controllers/side-bar-controller.js"></script>
+    <script src="/cliente/controllers/sentry-controller.js" type="module"></script>
+    <script src="/cliente/controllers/side-bar-controller.js"></script>
   </body>
 </html>
