@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var seedVehicles = require('./src/utils/vehicle.seeder');
 var logger = require('morgan');
 
 require('dotenv').config();
@@ -28,6 +29,7 @@ app.use('/api/v1/vehicle', vehicleRouter);
     try {
         console.log("Conectando a MongoDB...");
         await connectDB();
+        seedVehicles();
         console.log("Conectando a RabbitMQ...");
         await connectRabbit();
 
