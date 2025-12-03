@@ -1,16 +1,21 @@
-import { UserService } from "../Services/UserService.js";
+import UserClient from "../client/user.client.js";
 
-let userService = new UserService();
+let userClient = new UserClient();
 
 const form = document.querySelector("form");
 let eField = form.querySelector(".email");
 let eInput = eField.querySelector("input");
 let pField = form.querySelector(".password");
 let pInput = pField.querySelector("input");
+const $err = $('#loginError');
 
 form.onsubmit = (e)=>{
 
+  $err.text('') // hide the error text
+
   e.preventDefault(); //preventing from form submitting
+
+  console.log("Login button clicked");
 
   checkId(); //calling checkEmail function
   checkPass(); //calling checkPass function
@@ -33,7 +38,7 @@ function checkId(){
     return;
   }
 
-  let pattern = /^[0-9]{10}$/; //pattern for ten digit number
+  let pattern = /^[0-9]{11}$/; //pattern for ten digit number
   if(!eInput.value.match(pattern)){ // si NO coincide
     eField.classList.add("shake", "error")
     eField.classList.remove("valid");
@@ -70,30 +75,39 @@ function checkPass() {
  * handleLogin the logic for user login and redirection based on role
  * @returns {void} handleLogin function
  */
-function handleLogin() {
+async function handleLogin() {
   try {
     let email = eInput.value;
     let password = pInput.value;
+
+    $err.text('Complete todos los campos antes de continuar')
+    $err.show()
 
     // For debugging purposes
     console.log("Email:", email);
     console.log("Password:", password);
 
-    userService.loginUser(email, password);
-    let user = userService.getCurrentUser();
-    console.log("Logged in user:", user);
-    redirectToMainPage(user['role']);  
+    const user = await userClient.login(email, password)
+    console.log("User logged in:", user);
+
+    // Store tokens in localStorage
+    localStorage.setItem("accessToken", user.tokens.access);
+    localStorage.setItem("refreshToken", user.tokens.refresh);
+    localStorage.setItem("userInfo", user.user);
+
+    redirectToMainPage(user.user.rol);
 
   } catch (error) {
-    alert(error.message);
-    console.error("Login error:", error);
+    $err.text(error.message)
+    $err.show()
+    console.error(error);
   }
 }
 
 function redirectToMainPage(rol) {
-  if (rol === "ADMINISTRATOR") {
-    window.location.href = "ManagerView.html"; // Redirect to admin page
+  if (rol === "MANAGER") {
+    window.location.replace("manager-view.html"); // Redirect to manager page
   } else {
-    window.location.href = "SentryView.html"; // Redirect to user page
+    window.location.replace("sentry-view.html"); // Redirect to user page
   }
 }

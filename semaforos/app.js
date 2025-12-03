@@ -11,6 +11,7 @@ const PORT = process.env.SERVICE_PORT || 3050;
 const connectDB = require('./config/db');
 const loadSemaforos = require('./bootstrap/loadSemaforos');
 const startSemaforosScheduler = require('./scheduler/semaforosScheduler');
+const seedLights = require('./utils/lights.seeder');
 const { connectRabbit } = require('./messaging/rabbit');
 
 var indexRouter = require('./routes/index');
@@ -31,14 +32,14 @@ app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);
 
 app.use('/api/v1/status', statusRouter);
-app.use('/api/v1/semaforos', semaforosRouter); // <--- 2. USAR NUEVA RUTA
+app.use('/api/v1/semaforos', semaforosRouter);
 
 // Secuencia de inicialización
 (async () => {
     try {
-        await connectRabbit();
         await connectDB();
-        await loadSemaforos();
+        await seedLights();
+        await connectRabbit();
         startSemaforosScheduler();
         console.log('Servicio de Semáforos inicializado y corriendo.');
     } catch (error) {

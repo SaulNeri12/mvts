@@ -3,17 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-    <link rel="stylesheet" href="/CSS/index.css" />
-    <link rel="icon" href="/Resources/logo.png" />
+    <title>Inicio de sesion</title>
+    <link rel="stylesheet" href="/cliente/css/index.css" />
+    <link rel="icon" href="/cliente/resources/logo.png" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   </head>
   <body>
     <div class="wrapper">
-      <img src="/Resources/full-logo.png" alt="company logo" class="logo" />
+      <img src="/cliente/resources/logo.png" alt="company logo" class="logo" />
       <header>Inicio Sesion</header>
       <form action="#">
         <div class="field email">
@@ -22,7 +23,7 @@
             <i class="icon fas fa-user"></i>
             <i class="error error-icon fas fa-exclamation-circle"></i>
           </div>
-          <div class="error error-txt">Email can't be blank</div>
+          <div class="error error-txt">El ID no puede estar en blanco</div>
         </div>
         <div class="field password">
           <div class="input-area">
@@ -30,11 +31,12 @@
             <i class="icon fas fa-lock"></i>
             <i class="error error-icon fas fa-exclamation-circle"></i>
           </div>
-          <div class="error error-txt">Password can't be blank</div>
+          <div class="error error-txt">La contraseña no puedo estar en blanco</div>
         </div>
+        <div id="loginError" class="login-error" aria-live="polite"></div>
         <input type="submit" value="Entrar"/>
       </form>
     </div>
-    <script type="module" src="/Controllers/index.js"></script>
+    <script type="module" src="/cliente/controllers/index.js"></script>
   </body>
 </html>
