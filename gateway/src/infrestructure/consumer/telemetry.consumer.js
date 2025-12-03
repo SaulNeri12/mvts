@@ -6,7 +6,9 @@ const RabbitClient = require('../../config/rabbit.config');
  */
 class TelemetryConsumer {
   constructor() {
-    this.queueName = 'telemetry';
+    this.queueName = 'queue.telemetria.vehiculos.posiciones';
+    this.exchangeName = 'exchange.telemetria.vehiculos.posiciones';
+    this.routingKey = 'queue.telemetria.vehiculos.posiciones';
     this.rabbitClient = new RabbitClient();
     this.isConsuming = false;
   }
@@ -22,7 +24,7 @@ class TelemetryConsumer {
       }
 
       // Ensure queue exists
-      await this.rabbitClient.assertQueue(this.queueName, { durable: true });
+      await this.rabbitClient.assertQueue(this.queueName, { durable: true }, this.exchangeName, this.routingKey);
 
       // Get channel and set prefetch
       const ch = await this.rabbitClient.getChannel();
@@ -36,10 +38,10 @@ class TelemetryConsumer {
         try {
             const content = JSON.parse(msg.content.toString());
             this.processMessage(content);
-            ch.ack(msg); // Acknowledge the message
+            //ch.ack(msg); // Acknowledge the message
         } catch (err) {
             console.error(`Error processing message from ${this.queueName}:`, err.message);
-            ch.nack(msg, false, true); // Requeue the message
+            //ch.nack(msg, false, true); // Requeue the message
         }
       });
 
@@ -52,25 +54,8 @@ class TelemetryConsumer {
 
   async processMessage(content) {
     console.log(`Received message from ${this.queueName}:`, content);
-}
+  }
 
-  /**
-   * Stop consuming messages and close the connection.
-   */
-//  async stopConsuming() {
-//    try {
-//      if (!this.isConsuming) {
-//        console.warn(`${this.queueName} consumer is not running`);
-//        return;
-//      }
-//
-//      await this.rabbitClient.close();
-//      this.isConsuming = false;
-//      console.log(`${this.queueName} consumer stopped`);
-//    } catch (err) {
-//      console.error(`Error stopping ${this.queueName} consumer:`, err.message);
-//    }
-//  }
 }
 
 // Export singleton instance
