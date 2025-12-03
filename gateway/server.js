@@ -14,7 +14,7 @@ const userPrivateRouter = require('./src/routers/private/session.router');
 const app = express();
 const server = http.createServer(app);
 
-const PORT = process.env.SERVICE_PORT || 3000;
+const PORT = process.env.SERVICE_PORT || 8080;
 const SERVICE_NAME = process.env.SERVICE_NAME || 'gateway-service';
 
 
@@ -56,11 +56,11 @@ function setUpSocketIO() {
 }
 
 function setUpRabbitMQConsumers(){
-  const TelemetryConsumer = require('./src/infrestructure/consumer/telemetry.consumer');
+  //const TelemetryConsumer = require('./src/infrestructure/consumer/telemetry.consumer');
   //const AlertsConsumer = require('./src/infrestructure/consumer/alerts.consumer');
   //const LightsConsumer = require('./src/infrestructure/consumer/lights.consumer');
 
-  TelemetryConsumer.startConsuming();
+  //TelemetryConsumer.startConsuming();
   //AlertsConsumer.startConsuming();
   //LightsConsumer.startConsuming();
 }
