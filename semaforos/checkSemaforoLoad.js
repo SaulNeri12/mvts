@@ -1,4 +1,4 @@
-// Importamos las dependencias necesarias
+P// Importamos las dependencias necesarias
 const mongoose = require('mongoose');
 require('dotenv').config();
 const connectDB = require('./config/db');
