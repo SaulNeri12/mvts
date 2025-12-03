@@ -21,7 +21,8 @@ def init():
         veh_memory = Vehiculo(
             codigo=v["code"], 
             current_segment_index=0, 
-            current_point_index=0
+            current_point_index=0,
+            carga=v["load"]
         )
         
         try:
