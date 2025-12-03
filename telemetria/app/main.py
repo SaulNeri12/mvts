@@ -88,7 +88,7 @@ def main():
 
     while True:
         try:
-            publish_message(POSICIONES_VEHICULOS_QUEUE, '{"message":"hola mundo"}')
+            #publish_message(POSICIONES_VEHICULOS_QUEUE, '{"message":"hola mundo"}')
             time.sleep(3)
         except KeyboardInterrupt:
             print("Deteniendo servicio...")
