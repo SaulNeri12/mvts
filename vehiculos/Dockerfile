@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expone el puerto que usa tu app.
-EXPOSE 3000
+EXPOSE 3052
 
 # Comando final para correr la aplicación.
 CMD [ "npm", "start" ]

@@ -9,8 +9,9 @@ const { publishStateChange } = require('../messaging/rabbit'); // Para notificar
 // --- CREAR SEMÁFORO (POST) ---
 router.post('/', async (req, res) => {
     try {
-        const { description, latitude, longitude } = req.body;
+        const { description, latitude, longitude, code } = req.body;
         const nuevoSemaforo = new SemaforoModel({
+            code,
             description,
             position: { latitude, longitude }
         });
@@ -29,15 +30,15 @@ router.post('/', async (req, res) => {
 
 // --- ACTUALIZAR INFO ESTÁTICA (PATCH) ---
 // Ruta: /api/semaforos/:id
-router.patch('/:id', async (req, res) => {
+router.patch('/:code', async (req, res) => {
     try {
-        const { id } = req.params;
+        const { code } = req.params;
         const { description, latitude, longitude } = req.body;
 
         // Solo actualizamos MongoDB. La memoria no cambia porque el objeto en memoria
         // solo maneja el estado (luces), no la descripción ni posición.
-        const doc = await SemaforoModel.findByIdAndUpdate(
-            id,
+        const doc = await SemaforoModel.findOneAndUpdate(
+            { code },
             { description, position: { latitude, longitude } },
             { new: true }
         );
@@ -53,13 +54,13 @@ router.patch('/:id', async (req, res) => {
 
 // --- CAMBIAR ESTADO MANUALMENTE (POST) ---
 // Ruta: /api/semaforos/:id/estado
-router.post('/:id/estado', (req, res) => {
+router.post('/:code/estado', (req, res) => {
     try {
-        const { id } = req.params;
+        const { code } = req.params;
         const { estado } = req.body; // Espera "verde", "rojo", 0, 1, etc.
 
         // Verificar si existe en memoria (el semáforo debe estar vivo)
-        const semaforo = semaforos.get(id);
+        const semaforo = semaforos.get(code);
         if (!semaforo) {
             return res.status(404).json({ error: 'El semáforo no está activo en memoria.' });
         }
@@ -68,11 +69,11 @@ router.post('/:id/estado', (req, res) => {
         const nuevoEstado = semaforo.forceState(estado);
 
         // Notificar a RabbitMQ inmediatamente (para que los otros servicios se enteren ya)
-        publishStateChange(id, nuevoEstado);
+        publishStateChange(estado, nuevoEstado);
 
-        console.log(`[API-MANUAL] Semáforo ${id} forzado a: ${nuevoEstado}`);
+        console.log(`[API-MANUAL] Semáforo ${code} forzado a: ${nuevoEstado}`);
         res.json({
-            id,
+            code,
             estado_anterior: "...",
             nuevo_estado: nuevoEstado,
             mensaje: "Cambio manual aplicado exitosamente"
@@ -84,13 +85,13 @@ router.post('/:id/estado', (req, res) => {
 });
 
 // --- ELIMINAR SEMÁFORO (DELETE) ---
-router.delete('/:id', async (req, res) => {
+router.delete('/:code', async (req, res) => {
     try {
-        const { id } = req.params;
-        await SemaforoModel.findByIdAndDelete(id);
+        const { code } = req.params;
+        await SemaforoModel.findOneAndDelete({ code });
 
-        if (semaforos.has(id)) {
-            semaforos.delete(id);
+        if (semaforos.has(code)) {
+            semaforos.delete(code);
         }
 
         res.json({ message: 'Semáforo eliminado correctamente' });

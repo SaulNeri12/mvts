@@ -1,4 +1,4 @@
-#Clase semaforos_store.py
+
 from model.semaforo import Semaforo
 
 from typing import Optional
