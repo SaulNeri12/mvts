@@ -6,7 +6,6 @@ const {getIO} = require('../config/socket.config'); // Import the io instance
  */
 exports.emitTelemetryUpdate = async (message) => {
     const io = getIO();
-    console.log(message);
     io.emit('telemetry_update', message);
 }
 
