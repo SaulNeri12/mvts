@@ -13,7 +13,7 @@ function authenticateToken(req, res, next) {
   // Verify if token is valid
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json('Invalid or expired session');
+      return res.status(403).json('Sesion invalida o expirada.');
     }
     // Save user info in request object
     req.user = user;
