@@ -3,10 +3,10 @@ const http = require('http');
 const cors = require('cors');
 const express = require('express');
 const socketio = require('socket.io');
-const { initSocket } = require('./src/config/socket.config');
-const connectDB = require('./src/config/mongo.config');
 const seedUsers = require('./src/utils/users.seeder');
+const connectDB = require('./src/config/mongo.config');
 const seedSessions = require('./src/utils/session.seeder');
+const { initSocket } = require('./src/config/socket.config');
 const errorHandler = require('./src/middlewares/error.middleware');
 const userPublicRouter = require('./src/routers/public/session.router');
 const userPrivateRouter = require('./src/routers/private/session.router');
@@ -41,7 +41,6 @@ const SERVICE_NAME = process.env.SERVICE_NAME || 'gateway-service';
 })();    
 
 function setUpExternalMiddlewares() {
-  // Setup external middlewares here (e.g., CORS, logging)
   app.use(express.json()); // Middleware to parse JSON bodies
 
   // Setup CORS for HTTP requests

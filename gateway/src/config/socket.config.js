@@ -4,6 +4,11 @@
 
 let ioInstance = null;
 
+/**
+ * 
+ * @param {Object} server server instance
+ * @returns 
+ */
 function initSocket(server) {
     const { Server } = require('socket.io');
     const io = new Server(server, {
@@ -13,19 +18,17 @@ function initSocket(server) {
         }
     });
     ioInstance = io;
-
-    // Autenticación en handshake
     //io.use(socketAuth);
-
-    // Registrar módulos de sockets por separado
     //telemetrySocket(io);
 
     console.log("socket.io initialized");
-    return io;
 }
 
-// Exportar la instancia para usarla en otros módulos
-function getIO() {
+/**
+ * Get the IO instance
+ * @returns IO instance
+ */
+function getIO() {      
     return ioInstance;
 }
 
