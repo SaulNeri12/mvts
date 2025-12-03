@@ -167,6 +167,11 @@ services:
       - SERVICE_NAME=congestiones-service
       - SERVICE_PORT=3010
       - TTL_INTERVAL=10
+      #esto se agrego nuevo
+      - COLA_POSICIONES_VEHICULOS=queue.telemetria.vehiculos.posiciones 
+      - COLA_CONGESTIONES=exchange.congestiones
+      - EXCHANGES_SEMAFOROS_ESTADO=exchange.semaforos.estado
+      - COLA_SEMAFOROS_CONGESTIONES=queue.congestiones.semaforos
     ports:
     - "3010:3010"
     networks:
