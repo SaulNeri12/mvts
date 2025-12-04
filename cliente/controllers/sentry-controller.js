@@ -40,7 +40,7 @@ function initMap() {
     myIcon = L.icon({
         iconUrl: '/cliente/resources/loading-truck.png',
         iconSize: [25, 20],
-        popupAnchor: [-3, -76],
+        popupAnchor: [0, -20],
         //iconAnchor: [22, 94],
         //shadowUrl: 'my-icon-shadow.png',
         //shadowSize: [68, 95],
@@ -84,7 +84,7 @@ function handletelemetryUpdate(message){
     let lon = telemetryData.longitude;
 
     L.marker([lat, lon], { icon: myIcon })
-    .popUp(telemetryData.code)
+    .bindPopup(telemetryData.code)
     .addTo(layerVehicles);
 }
 
