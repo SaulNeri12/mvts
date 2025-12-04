@@ -8,8 +8,8 @@ import math
 
 SIMULATED_SEMAFORO_DATA = {
     # aqui colocar las coordenadas manualmente de los 2 semaforos
-    "S1": {"latitud": "19.4326", "longitud": "-99.1332"},
-    "S2": {"latitud": "19.4350", "longitud": "-99.1350"},
+    "S1": {"latitud": "30.97278024833265", "longitud": "-110.3504071944602"},
+    "S2": {"latitud": "30.9692866660163", "longitud": "-110.355977576714"},
 }
 
 def inicializar_ubicaciones_semaforos():
@@ -33,6 +33,7 @@ def inicializar_ubicaciones_semaforos():
 
 def update_semaforo_state(codigo: str, estado: str):
     """ Actualiza el estado de un semáforo en la memoria global. """
+    from datetime import datetime # Necesario para la importación tardía en el runtime
     with SEMAFOROS_LOCK:
         if codigo in ESTADOS_SEMAFOROS_GLOBALES:
             ESTADOS_SEMAFOROS_GLOBALES[codigo].estado = estado
