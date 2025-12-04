@@ -2,8 +2,9 @@
 
 import json
 from os import getenv
+# CORRECCIÓN: Importamos directamente desde el nombre del paquete
 from config.rabbitmq import start_consumer, create_fanout_exchange, connect_to_rabbitmq 
-from app.vehicle_info_loader import update_semaforo_state 
+from vehicle_info_loader import update_semaforo_state
 
 EXCHANGE_SEMAFOROS_ESTADO = getenv("EXCHANGES_SEMAFOROS_ESTADO", "exchange.semaforos.estado")
 COLA_SEMAFOROS_CONGESTIONES = getenv("COLA_SEMAFOROS_CONGESTIONES", "queue.congestiones.semaforos") 
