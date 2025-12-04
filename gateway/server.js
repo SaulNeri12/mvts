@@ -10,6 +10,7 @@ const { initSocket } = require('./src/config/socket.config');
 const errorHandler = require('./src/middlewares/error.middleware');
 const userPublicRouter = require('./src/routers/public/session.router');
 const userPrivateRouter = require('./src/routers/private/session.router');
+const lightPrivateRouter = require('./src/routers/private/lights.router')
 
 const app = express();
 const server = http.createServer(app);
@@ -73,6 +74,7 @@ function setUpPublicRoutes(){
 function setUpPrivateRoutes(){
   // private routes
   app.use('/user', userPrivateRouter);
+  app.use('/api/v1/lights', lightPrivateRouter);
 }
 
 function setUpInternallMiddlewares(){
