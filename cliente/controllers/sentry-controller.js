@@ -1,6 +1,8 @@
 import LightsClient from "../client/lights.client.js";
+import NotificationClient from "../client/notification.client.js";
 
 const lightsClient = new LightsClient();
+const notificationClient = new NotificationClient();
 
 //declarations for the dialog and the button
 let btnLogout = document.getElementById('logout-button'); 
@@ -63,8 +65,8 @@ function initWebSocket(){
         handletelemetryUpdate(message);
     });
 
-    socket.on('alert_update', (message)=>{
-        //handlealertsUpdate(message);
+    socket.on('viaje_completado', (message)=>{
+        handleTravelCompletedUpdate(message);
     });
 
     socket.on('lights_update', (message)=> {
@@ -118,7 +120,21 @@ function addLightsToMap(lights) {
 }
 
 async function initNotifications(){
+    try{
+        const notifications = await notificationClient.getAllNotifications();
+        if(!notifications) return;
 
+        addNotificationsToTable(notifications);
+    }
+    catch(error){
+        console.error('Error al cargar las notificaciones:', error);
+    }
+}
+
+function addNotificationsToTable(notifications) {
+    notifications.forEach(notification => {
+        addNotificationToTable(notification)
+    });
 }
 
 function handletelemetryUpdate(message){
@@ -173,7 +189,48 @@ function addLightToMap(light) {
     lightsMarkers[light.code] = marker;
 }
 
+function handleTravelCompletedUpdate(message) {
+    const notification = message
+    addNotificationToTable(notification);
+    showNotification({text: notification.title});
+}
 
+function addNotificationToTable(notification){
+    const $notificationsTable = $('#notifications-table');
+    const date = new Date(notification.timestamp);
+    const localDate = date.toLocaleDateString();
+    const localTime = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const color = {
+        "viaje_completado": "green",
+        "congestion": "red"
+    }
+    const row = `
+        <tr>
+            <td>${localDate}</td>
+            <td>${localTime}</td>
+            <td style="color: ${color[notification.type] || 'black' }">
+                ${notification.title}
+            </td>
+        </tr>
+    `
+    $notificationsTable.prepend(row);
+}
+
+function showNotification(opt = {}){
+    Toastify({
+    text: opt.text,
+    duration: 4000,
+    //destination: "https://github.com/apvarun/toastify-js",
+    //newWindow: true,
+    close: true,
+    gravity: "top", // `top` or `bottom`
+    position: "right", // `left`, `center` or `right`
+    stopOnFocus: true, // Prevents dismissing of toast on hover
+    style: {
+        background: "linear-gradient(to right, #00b09b, #96c93d)",  
+    }
+    }).showToast();
+}
 
 
 
