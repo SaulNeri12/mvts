@@ -11,6 +11,7 @@ const errorHandler = require('./src/middlewares/error.middleware');
 const userPublicRouter = require('./src/routers/public/session.router');
 const userPrivateRouter = require('./src/routers/private/session.router');
 const lightPrivateRouter = require('./src/routers/private/lights.router')
+const alertsPrivateRouter = require('./src/routers/private/alerts.router');
 
 const app = express();
 const server = http.createServer(app);
@@ -60,8 +61,10 @@ function setUpRabbitMQConsumers(){
   const TelemetryConsumer = require('./src/infrestructure/consumer/telemetry.consumer');
   //const AlertsConsumer = require('./src/infrestructure/consumer/alerts.consumer');
   const LightsConsumer = require('./src/infrestructure/consumer/lights.consumer');
+  const AlertasViajesCompletadosConsumer = require('./src/infrestructure/consumer/alerts.viajes.consumer');
 
   TelemetryConsumer.startConsuming();
+  AlertasViajesCompletadosConsumer.startConsuming();
   //AlertsConsumer.startConsuming();
   LightsConsumer.startConsuming();
 }
@@ -75,6 +78,7 @@ function setUpPrivateRoutes(){
   // private routes
   app.use('/user', userPrivateRouter);
   app.use('/api/v1/lights', lightPrivateRouter);
+  app.use('/api/v1/alerts', alertsPrivateRouter);
 }
 
 function setUpInternallMiddlewares(){
