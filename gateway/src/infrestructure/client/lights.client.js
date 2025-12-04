@@ -1,9 +1,9 @@
-import axios from 'https://cdn.jsdelivr.net/npm/axios@1.6.0/+esm';
+const axios = require('axios');
 
-export default class  SessionService {
+class SessionService {
   constructor(){
     this.api = axios.create({
-      baseURL: 'http://localhost:3000',
+      baseURL: 'http://semaforos:3050',
       timeout: 3000,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -45,8 +45,10 @@ export default class  SessionService {
 
   async getAllLights(){
     try{
-      await this.api.get('url', {});
+      const response = await this.api.get('/api/v1/semaforos');
+      return response.data;
     }catch(error){
+      console.log(error);
       const errorMessage = error.response?.data;
       throw new Error(errorMessage || 'Error al obtener los semaforos' );
     }
@@ -67,3 +69,5 @@ export default class  SessionService {
   }
 
 }
+
+module.exports = new SessionService();

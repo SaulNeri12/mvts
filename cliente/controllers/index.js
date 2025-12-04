@@ -48,7 +48,7 @@ function checkId(){
     }, 500);
 
     let errorTxt = eField.querySelector(".error-txt");
-    errorTxt.innerText = "Enter a valid ID";
+    errorTxt.innerText = "Inserte un ID valido";
   } else {
     eField.classList.remove("error");
     eField.classList.add("valid");
@@ -80,9 +80,6 @@ async function handleLogin() {
     let email = eInput.value;
     let password = pInput.value;
 
-    $err.text('Complete todos los campos antes de continuar')
-    $err.show()
-
     // For debugging purposes
     console.log("Email:", email);
     console.log("Password:", password);
@@ -105,9 +102,9 @@ async function handleLogin() {
 }
 
 function redirectToMainPage(rol) {
-  if (rol === "MANAGER") {
-    window.location.replace("manager-view.html"); // Redirect to manager page
-  } else {
+  if (rol === "SENTINEL") {
     window.location.replace("sentry-view.html"); // Redirect to user page
+  } else {
+    window.location.replace("manager-view.html"); // Redirect to manager page
   }
 }

@@ -1,14 +1,17 @@
 const RabbitClient = require('../../config/rabbit.config');
-
+const lightsController = require('../../controllers/lights.controller')
 /**
  * Consumer for the lights queue.
  * Connects to RabbitMQ and consumes messages from the lights queue.
  */
 class LightsConsumer {
   constructor() {
-    this.queueName = 'lights';
-    this.rabbitClient = new RabbitClient();
-    this.isConsuming = false;
+      this.queueName = 'queue.cambio.estados.semaforo';
+      this.exchangeName = 'exchange.semaforos.estado';
+      this.routingKey = 'queue.cambio.estados.semaforo';
+      this.rabbitClient = new RabbitClient('amqp://guest:guest@rabbitmq:5672');
+      this.exchangeType = 'fanout';
+      this.isConsuming = false;
   }
 
   /**
@@ -22,9 +25,10 @@ class LightsConsumer {
       }
 
       // Ensure queue exists
-      await this.rabbitClient.assertQueue(this.queueName, { durable: true });
+      await this.rabbitClient.assertQueue(this.queueName, { durable: true }, this.exchangeName, this.exchangeType, this.routingKey);
 
-      // Get channel and set prefetch
+
+        // Get channel and set prefetch
       const ch = await this.rabbitClient.getChannel();
       await ch.prefetch(1); // Process one message at a time
 
@@ -34,8 +38,8 @@ class LightsConsumer {
         if (!msg) return;
 
         try {
-            const content = JSON.parse(msg.content.toString());
-            processMessage(content);
+            const content = msg.content.toString();
+            this.processMessage(content);
             ch.ack(msg); // Acknowledge the message
 
           } catch (err) {
@@ -52,26 +56,9 @@ class LightsConsumer {
   }
 
   async processMessage(content) {
-    console.log(`Revived message from ${this.queueName}:`, content);
+    lightsController.handleLightsMessage(content);
   }
 
-  /**
-   * Stop consuming messages and close the connection.
-   */
-//  async stopConsuming() {
-//    try {
-//      if (!this.isConsuming) {
-//        console.warn('the consumer is not running');
-//        return;
-//      }
-//
-//      await this.rabbitClient.close();
-//      this.isConsuming = false;
-//      console.log('cosnumer stopped successfully');
-//    } catch (err) {
-//      console.error(`Error stopping ${this.queueName} consumer:`, err.message);
-//    }
-//  }
 }
 
 module.exports = new LightsConsumer();

@@ -29,7 +29,7 @@ const seedVehicles = async () => {
             },
             {
                 _id: oid("692ab40410491d495b63b112"),
-                code: "Iron",
+                code: "VH-01",
                 isActive: "true",
                 load: {
                     material: "Gravel",

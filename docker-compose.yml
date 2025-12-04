@@ -124,6 +124,7 @@ services:
       - consul
       - rabbitmq
       - congestiones
+      - telemetria
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=guest
@@ -131,10 +132,11 @@ services:
       - CONSUL_HOST=consul-server
       - CONSUL_PORT=8500
       - SERVICE_NAME=alertas-service
-      - SERVICE_PORT=3012
+      - SERVICE_PORT=3054
       - TTL_INTERVAL=10
+      - MONGO_URL=mongodb://root:rootpassword@mongodb:27017/alertas?authSource=admin
     ports:
-    - "3012:3012"
+    - "3054:3054"
     networks:
       - mvts_network
 
