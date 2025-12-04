@@ -13,11 +13,13 @@ exports.saveAlert = async (alert) => {
 }
 
 exports.findAlertsForToday = async () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   try {
-    const alertsToday = await AlertModel.find({
+    const alertsToday = await alertModel.find({
       timestamp: {
         $gte: today,
         $lt: tomorrow

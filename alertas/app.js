@@ -2,7 +2,8 @@
 
 const connectDB = require('./config/mongo.config');
 
-const telemetryConsumer = require('./infrastructure/consumer/telemetry.consumer');
+const viajesCompletadosConsumer = require('./infrastructure/consumer/viajes.completados.consumer');
+const alertPublisher = require('./infrastructure/publisher/alertas.publisher');
 
 require("dotenv").config();
 
@@ -12,7 +13,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var alertsRouter = require('./routes/alerts.route');
-
 
 var app = express();
 
@@ -24,15 +24,23 @@ app.use(cookieParser());
 app.use('/api/v1/alerts', alertsRouter);
 
 async function initializeConsumers() {
-    telemetryConsumer.startConsuming();
+    await viajesCompletadosConsumer.startConsuming();
+}
+
+async function initializePublishers() {
+    await alertPublisher.initialize();
 }
 
 (async () => {
     try {
         console.log("Conectando a MongoDB...");
         await connectDB();
+
         console.log("Iniciando consumidores");
         await initializeConsumers();
+
+        console.log("Iniciando publicadores");
+        await initializePublishers();
 
         const PORT = process.env.SERVICE_PORT || 3054;
 

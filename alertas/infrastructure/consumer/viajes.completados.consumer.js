@@ -1,15 +1,17 @@
 const RabbitClient = require('../../config/rabbit.config');
 
-/**
- * Consumer for the telemetry queue.
- * Connects to RabbitMQ and consumes messages from the telemetry queue.
- */
-class TelemetryConsumer {
+const alertService = require('../../services/alert.service');
+
+const alertPublisher = require('../publisher/alertas.publisher');
+
+const uuid = require("uuid");
+
+class ViajesCompletadosConsumer {
 
   constructor() {
-    this.queueName = 'queue.telemetria.vehiculos.posiciones';
-    this.exchangeName = 'exchange.telemetria.vehiculos.posiciones';
-    this.routingKey = 'queue.telemetria.vehiculos.posiciones';
+    this.queueName = 'queue.telemetria.vehiculos.viajes.completados';
+    this.exchangeName = 'exchange.telemetria.vehiculos.viajes.completados';
+    this.routingKey = 'queue.telemetria.vehiculos.viajes.completados';
     this.rabbitClient = new RabbitClient('amqp://guest:guest@rabbitmq:5672');
     this.exchangeType = 'fanout';
     this.isConsuming = false;
@@ -26,7 +28,13 @@ class TelemetryConsumer {
       }
 
       // Ensure queue exists
-      await this.rabbitClient.assertQueue(this.queueName, { durable: true }, this.exchangeName, this.exchangeType, this.routingKey);
+      await this.rabbitClient.assertQueue(
+        this.queueName, 
+        { durable: true }, 
+        this.exchangeName, 
+        this.exchangeType, 
+        this.routingKey
+    );
 
       // Get channel and set prefetch
       const ch = await this.rabbitClient.getChannel();
@@ -38,7 +46,7 @@ class TelemetryConsumer {
         if (!msg) return null; 
 
         try {
-            const content = msg.content.toString();
+            const content = JSON.parse(msg.content.toString());
             this.processMessage(content);
             ch.ack(msg); // Acknowledge the message
         } catch (err) {
@@ -58,6 +66,18 @@ class TelemetryConsumer {
     try {
       console.log("ALERTAS SERVICE -> recibido");
       console.log(content);
+
+      let alert = {
+        id: uuid.v4(),
+        type: 'viaje_completado',
+        title: `El vehículo ${content.vehicle.code} llegó a su destinó y descargó ${content.load.weight} de ${content.load.material}`,
+        timestamp: new Date()
+      };
+
+      alertPublisher.publish(alert);
+
+      await alertService.saveAlert(alert);
+
     } catch (err) {
       console.error('Error in telemetry.consumer.js:', err.message);
     }
@@ -65,5 +85,4 @@ class TelemetryConsumer {
 
 }
 
-// Export singleton instance
-module.exports = new TelemetryConsumer();
+module.exports = new ViajesCompletadosConsumer();

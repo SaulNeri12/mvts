@@ -40,6 +40,7 @@ def init_exchanges_and_queues():
         # creamos los exchanges necesarios para recibir mensajes de otros servicios.
         create_fanout_exchange(channel, EXCHANGE_POSICIONES_VEHICULOS)
         create_fanout_exchange(channel, SEMAFOROS_ESTADO_EXCHANGE)
+        create_fanout_exchange(channel, EXCHANGE_VIAJES_COMPLETADOS)
         
         # definimos las colas a escuchar.
         create_queue_and_bind(channel, ESTADOS_SEMAFOROS_QUEUE, SEMAFOROS_ESTADO_EXCHANGE)
