@@ -1,6 +1,6 @@
 
 //declarations for the dialog and the button
-let btnLogout = document.getElementById('logout-button');
+let btnLogout = document.getElementById('logout-button'); 
 let btnLightsFilters = document.getElementById('lights-filters-button');
 let btnNotificationsFilters = document.getElementById('notifications-filter-button');
 

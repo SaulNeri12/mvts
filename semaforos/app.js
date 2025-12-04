@@ -37,10 +37,10 @@ app.use('/api/v1/semaforos', semaforosRouter); // <--- 2. USAR NUEVA RUTA
 // Secuencia de inicialización
 (async () => {
     try {
-        await connectRabbit();
         await connectDB();
         await seedLights(); 
         await loadSemaforos();
+        await connectRabbit();
         startSemaforosScheduler();
         console.log('Servicio de Semáforos inicializado y corriendo.');
     } catch (error) {
