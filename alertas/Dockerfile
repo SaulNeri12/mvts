@@ -1,11 +1,14 @@
-FROM python:3.12-slim
+
+FROM node:22.12.0-slim
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt .
+COPY package*.json ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN npm install
 
-COPY app ./app
+COPY . .
 
-CMD ["python", "-u", "app/main.py"]
+EXPOSE 3054
+
+CMD [ "npm", "start" ]
