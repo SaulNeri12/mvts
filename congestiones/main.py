@@ -1,11 +1,11 @@
+#clase main.py
 
-# clase main.py
-
+# Ahora importamos directamente desde el nombre del subpaquete, ya que '/app/app' está en el PYTHONPATH
 from config.consul import start_consul_connection
 from config.rabbitmq import start_rabbit
-from app.congestiones_service import start_congestiones_service
-from app.semaforos_consumer import init_semaforos_consumer
-from app.vehicle_info_loader import inicializar_ubicaciones_semaforos 
+from service.congestiones_service import start_congestiones_service
+from messaging.semaforos_consumer import init_semaforos_consumer 
+from vehicle_info_loader import inicializar_ubicaciones_semaforos 
 
 import threading
 
