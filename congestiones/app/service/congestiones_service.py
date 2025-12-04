@@ -6,9 +6,10 @@ from typing import Dict, Optional
 from dataclasses import asdict
 from os import getenv
 
-from config.rabbitmq import start_consumer, publish_to_exchange
-from app.models.data_models import PosicionVehiculoData, EstadoVehiculoTemp, CongestionAlertaData, ESTADOS_VEHICULOS
-from app.vehicle_info_loader import get_semaforo_state, get_closest_semaforo_id 
+# CORRECCIÓN: Importamos directamente desde el nombre del paquete (config, models, etc.)
+from config.rabbitmq import start_consumer, publish_to_exchange 
+from models.data_models import PosicionVehiculoData, EstadoVehiculoTemp, CongestionAlertaData, ESTADOS_VEHICULOS
+from vehicle_info_loader import get_semaforo_state, get_closest_semaforo_id
 
 COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "posiciones_vehiculos")
 EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "congestiones") 
