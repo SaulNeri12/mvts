@@ -23,7 +23,7 @@ const seedVehicles = async () => {
                 code: "VH-01",
                 isActive: "true",
                 load: {
-                    material: "Gravel",
+                    material: "Carbon",
                     weight: 1500
                 }
             },
@@ -32,7 +32,7 @@ const seedVehicles = async () => {
                 code: "VH-01",
                 isActive: "true",
                 load: {
-                    material: "Gravel",
+                    material: "Arena",
                     weight: 2000
                 }
             }

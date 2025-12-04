@@ -14,7 +14,7 @@ COLA_POSICIONES_VEHICULOS = "queue.telemetria.vehiculos.posiciones"
 
 VIAJES_COMPLETADOS_QUEUE = "queue.telemetria.vehiculos.viajes.completados"
 
-TIME_STEP = 1 # cada 3 segundos se muven los vehiculos...
+TIME_STEP = 3 # cada 3 segundos se muven los vehiculos...
 
 
 def move_vehicle_to_next_point(vehicle):
