@@ -56,11 +56,11 @@ function setUpSocketIO() {
 }
 
 function setUpRabbitMQConsumers(){
-  //const TelemetryConsumer = require('./src/infrestructure/consumer/telemetry.consumer');
+  const TelemetryConsumer = require('./src/infrestructure/consumer/telemetry.consumer');
   //const AlertsConsumer = require('./src/infrestructure/consumer/alerts.consumer');
   //const LightsConsumer = require('./src/infrestructure/consumer/lights.consumer');
 
-  //TelemetryConsumer.startConsuming();
+  TelemetryConsumer.startConsuming();
   //AlertsConsumer.startConsuming();
   //LightsConsumer.startConsuming();
 }

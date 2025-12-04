@@ -58,6 +58,7 @@ class TelemetryConsumer {
 
   async processMessage(content) {
     try {
+      console.log(`Received message from ${this.queueName}:`, content);
       await telemetryController.handleTelemetryMessage(content);
     } catch (err) {
       console.error('Error in telemetryController.handleTelemetryData:', err.message);
