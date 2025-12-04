@@ -1,5 +1,7 @@
 const RabbitClient = require('../../config/rabbit.config');
 
+const alertsController = require('../../controllers/alerts.controller');
+
 /**
  * Consumer for the alerts queue.
  * Connects to RabbitMQ and consumes messages from the alerts queue.
@@ -61,7 +63,7 @@ class AlertasViajesCompletadosConsumer {
 
   async processMessage(content) {
     console.log(`Received message from ${this.queueName}:`, content);
-
+    await alertsController.handleViajeCompletadoAlerts(content);
   }
 
   /**
