@@ -23,6 +23,8 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&"
     />
+    <!-- Tostify -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">    
     <!-- socket.io client -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <!-- JQuery -->
@@ -210,49 +212,28 @@
             </div>
 
             <!-- Container for the table 3 -->
-            <table class="styled-table">
-            <div class="table-header">
-                <p>Notificaciones</p>
-                <button id="notifications-filter-button" class="secondary-button">
-                Filtros
-                <span class="material-symbols-outlined">filter_alt</span>
-                </button>
-            </div>
-            <colgroup>
-                <col style="width: 20%" />
-                <col style="width: 10%" />
-                <col style="width: 80%" />
-            </colgroup>
-            <thead>
-                <tr>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Mensaje</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                <td>2024-06-01</td>
-                <td>13:03</td>
-                <td style="color: red">
-                    Se ha detectado una congestion en el tramo A-03
-                </td>
-                </tr>
-                <tr>
-                <td>2024-06-01</td>
-                <td>12:41</td>
-                <td style="color: red">
-                    Se ha detectado una congestion en el tramo A-02
-                </td>
-                </tr>
-                <tr>
-                <td>2024-06-01</td>
-                <td>13:03</td>
-                <td style="color: green">
-                    El Vehiculo 003 a llegado con exito al destino de descarga
-                </td>
-                </tr>
-            </tbody>
+            <table class="styled-table"  id="notifications-table">
+              <div class="table-header">
+                  <p>Notificaciones</p>
+                  <button id="notifications-filter-button" class="secondary-button">
+                  Filtros
+                  <span class="material-symbols-outlined">filter_alt</span>
+                  </button>
+              </div>
+              <colgroup>
+                  <col style="width: 20%" />
+                  <col style="width: 20%" />
+                  <col style="width: 60%" />
+              </colgroup>
+              <thead>
+                  <tr>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Mensaje</th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
             </table>
             </article>
         </section>
@@ -367,10 +348,8 @@
       </form>
     </dialog>
 
-    <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- Luego tu script -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="/cliente/controllers/sentry-controller.js" type="module"></script>
     <script src="/cliente/controllers/side-bar-controller.js"></script>
   </body>
