@@ -65,7 +65,7 @@ class ViajesCompletadosConsumer {
   async processMessage(content) {
     try {
       console.log("ALERTAS SERVICE -> recibido");
-      console.log(content);
+      //console.log(content);
 
       let alert = {
         id: uuid.v4(),
@@ -73,6 +73,8 @@ class ViajesCompletadosConsumer {
         title: `El vehículo ${content.vehicle.code} llegó a su destinó y descargó ${content.load.weight} de ${content.load.material}`,
         timestamp: new Date()
       };
+
+      console.log(alert);
 
       alertPublisher.publish(alert);
 

@@ -1,22 +1,17 @@
 const axios = require('axios');
-
-export default class  AlertsClient {
+class  AlertsClient {
   constructor(){
     this.api = axios.create({
-      baseURL: 'http://localhost:3001',
+      baseURL: 'http://alertas:3054',
       timeout: 3000,
       headers: { 'Content-Type': 'application/json' }
     });
   }
 
-  /**
-   * REST Client to retrieve all alerts.
-   * @returns all alerts
-   */
-  async getAllAlerts(){
+  async getAlertsForToday(){
     try 
     {
-      const response = await this.api.get('url', {});
+      const response = await this.api.get('/api/v1/alerts/today');
       return response.data; 
     } 
     catch (error)
@@ -25,5 +20,6 @@ export default class  AlertsClient {
       throw new Error(errorMessage || 'Error al obtener las alertas');
     }
   }
-
 }
+
+module.exports = new AlertsClient();

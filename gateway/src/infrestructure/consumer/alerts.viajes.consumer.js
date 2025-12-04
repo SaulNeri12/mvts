@@ -1,13 +1,18 @@
 const RabbitClient = require('../../config/rabbit.config');
 
+const alertsController = require('../../controllers/alerts.controller');
+
 /**
  * Consumer for the alerts queue.
  * Connects to RabbitMQ and consumes messages from the alerts queue.
  */
-class AlertsConsumer {
+class AlertasViajesCompletadosConsumer {
   constructor() {
-    this.queueName = 'alerts';
-    this.rabbitClient = new RabbitClient();
+    this.queueName = '';
+    this.exchangeName = 'exchange.alertas.viajes.completados';
+    this.routingKey = '';
+    this.exchangeType = 'fanout';
+    this.rabbitClient = new RabbitClient('amqp://guest:guest@rabbitmq:5672');
     this.isConsuming = false;
   }
 
@@ -21,12 +26,18 @@ class AlertsConsumer {
         return;
       }
 
-      // Ensure queue exists
-      await this.rabbitClient.assertQueue(this.queueName, { durable: true });
-
-      // Get channel and set prefetch
       const ch = await this.rabbitClient.getChannel();
-      await ch.prefetch(1); // Process one message at a time
+
+      await ch.assertExchange(this.exchangeName, this.exchangeType, { durable: true });
+
+      const q = await ch.assertQueue('', { exclusive: true });
+      this.queueName = q.queue;
+
+      await ch.bindQueue(this.queueName, this.exchangeName, '');
+      console.log(`[CONSUMER] Escuchando en ${this.exchangeName} con cola temporal: ${this.queueName}`);
+
+     
+      await ch.prefetch(1);
 
       // Start consuming
       this.isConsuming = true;
@@ -35,11 +46,11 @@ class AlertsConsumer {
 
         try {
             const content = JSON.parse(msg.content.toString());
-
-            ch.ack(msg); // Acknowledge the message
+            this.processMessage(content);
+            ch.ack(msg);
         } catch (err) {
             console.error(`Error processing message from ${this.queueName}:`, err.message);
-            ch.nack(msg, false, true); // Requeue the message
+            ch.nack(msg, false, true);
         }
       });
 
@@ -52,6 +63,7 @@ class AlertsConsumer {
 
   async processMessage(content) {
     console.log(`Received message from ${this.queueName}:`, content);
+    await alertsController.handleViajeCompletadoAlerts(content);
   }
 
   /**
@@ -74,4 +86,4 @@ class AlertsConsumer {
 }
 
 // Export singleton instance
-module.exports = new AlertsConsumer();
+module.exports = new AlertasViajesCompletadosConsumer();
