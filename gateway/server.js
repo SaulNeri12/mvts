@@ -60,8 +60,10 @@ function setUpRabbitMQConsumers(){
   const TelemetryConsumer = require('./src/infrestructure/consumer/telemetry.consumer');
   //const AlertsConsumer = require('./src/infrestructure/consumer/alerts.consumer');
   const LightsConsumer = require('./src/infrestructure/consumer/lights.consumer');
+  const AlertasViajesCompletadosConsumer = require('./src/infrestructure/consumer/alerts.viajes.consumer');
 
   TelemetryConsumer.startConsuming();
+  AlertasViajesCompletadosConsumer.startConsuming();
   //AlertsConsumer.startConsuming();
   LightsConsumer.startConsuming();
 }
