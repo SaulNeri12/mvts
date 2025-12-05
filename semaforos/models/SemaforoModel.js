@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const SemaforoSchema = new mongoose.Schema({
     code: { type: String, required: true, unique: true},
-    description: { type: String, required: true },
+    section: { type: String, required: true },
     position: {
         latitude: { type: String, required: true },
         longitude: { type: String, required: true }
