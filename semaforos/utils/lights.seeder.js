@@ -22,8 +22,8 @@ const seedLights = async () => {
         const lights = [
             {
                 _id: oid("692a86ce748f9c4efc24546a"),
-                code: "247498",
-                description: "Este es otro semaforo de prueba",
+                code: "SM-01",
+                section: "TM-01",
                 position: {
                     latitude: "30.97278024833265",
                     longitude: "-110.3504071944602"
@@ -31,8 +31,8 @@ const seedLights = async () => {
             },
             {
                 _id: oid("692a86e3748f9c4efc24546c"),
-                code: "123456",
-                description: "Este es otro semaforo de prueba arre we",
+                code: "SM-02",
+                section: "TM-02",
                 position: {
                     latitude: "30.9692866660163",
                     longitude: "-110.355977576714"

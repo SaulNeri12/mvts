@@ -6,12 +6,12 @@ const alertPublisher = require('../publisher/alert.viajes.publisher');
 
 const uuid = require("uuid");
 
-class ViajesCompletadosConsumer {
+class CongestionesConsumer {
 
   constructor() {
-    this.queueName = 'queue.telemetria.vehiculos.viajes.completados';
-    this.exchangeName = 'exchange.telemetria.vehiculos.viajes.completados';
-    this.routingKey = 'queue.telemetria.vehiculos.viajes.completados';
+    this.queueName = '';
+    this.exchangeName = 'exchange.vehiculos.congestiones';
+    this.routingKey = '';
     this.rabbitClient = new RabbitClient('amqp://guest:guest@rabbitmq:5672');
     this.exchangeType = 'fanout';
     this.isConsuming = false;
@@ -27,17 +27,16 @@ class ViajesCompletadosConsumer {
         return;
       }
 
-      // Ensure queue exists
-      await this.rabbitClient.assertQueue(
-        this.queueName, 
-        { durable: true }, 
-        this.exchangeName, 
-        this.exchangeType, 
-        this.routingKey
-    );
-
-      // Get channel and set prefetch
       const ch = await this.rabbitClient.getChannel();
+
+      await ch.assertExchange(this.exchangeName, this.exchangeType, { durable: true });
+
+      const q = await ch.assertQueue('', { exclusive: true });
+      this.queueName = q.queue;
+
+      await ch.bindQueue(this.queueName, this.exchangeName, '');
+      console.log(`[CONSUMER] Escuchando en ${this.exchangeName} con cola temporal: ${this.queueName}`);
+
       await ch.prefetch(1);
 
       // Start consuming
@@ -55,7 +54,7 @@ class ViajesCompletadosConsumer {
         }
       });
 
-      console.log(`[viajes-completados] ${this.queueName} consumer started successfully`);
+      console.log(`[congestiones] ${this.queueName} consumer started successfully`);
     } catch (err) {
       console.error(`Failed to start ${this.queueName} consumer:`, err.message);
       this.isConsuming = false;
@@ -63,25 +62,38 @@ class ViajesCompletadosConsumer {
   }
 
   /**
-   * Procesa el evento recibido de un viaje completado por un vehiculo.
-   * @param {object} content Contiene toda la informacion acerca del viaje.
+   * Procesa la informacion de la congestion para almacenarla y retransmitirla a los
+   * consumidores Socket.io interesados.
+   * @param {object} content Contiene la informacion de la alerta recibida.
    */
   async processMessage(content) {
     try {
       console.log("ALERTAS SERVICE -> recibido");
       //console.log(content);
 
+      /*
+      id_vehiculo: str
+      latitud: float
+      longitud: float
+      timestamp_inicio: str 
+      duracion_segundos: int
+      motivo: str = "Detenido tras luz verde"
+      */
+
+      let event = {
+          vehicle_id: content['id_vehiculo'],
+          latitude: content['latitud'],
+          longitude: content['longitud'],
+          timestamp_start: content['timestamp_inicio'],
+          duration_secs: content['duracion_segundos'],
+          reason: content['motivo']
+      };
+
       let alert = {
         id: uuid.v4(),
-        type: 'viaje_completado',
-        title: `El vehículo ${content.vehicle.code} llegó a su destinó y descargó ${content.load.weight} Kg de ${content.load.material}`,
-        data: {
-          vehicle_id: content.vehicle.id,
-          load: {
-            material: content.load.material,
-            weight: content.load.weight
-          }
-        },
+        type: 'congestion',
+        title: `El vehículo ${event.vehicle_id} se encuentra en una congestión`,
+        data: event,
         timestamp: new Date()
       };
 
@@ -98,4 +110,4 @@ class ViajesCompletadosConsumer {
 
 }
 
-module.exports = new ViajesCompletadosConsumer();
+module.exports = new CongestionesConsumer();

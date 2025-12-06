@@ -11,8 +11,11 @@ from app.models.data_models import PosicionVehiculoData, EstadoVehiculoTemp, Con
 from app.vehicle_info_loader import get_semaforo_state, get_closest_semaforo_id 
 
 # colas y exchanges del .env
-COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "posiciones_vehiculos")
-EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "congestiones") 
+#COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "posiciones_vehiculos")
+#EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "congestiones")
+
+COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "queue.telemetria.vehiculos.posiciones")
+EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "exchange.vehiculos.congestiones") 
 
 #UMBRAL DE MOVIMIENTO son aprox 11 metros
 UMBRAL_MOVIMIENTO = 0.001 

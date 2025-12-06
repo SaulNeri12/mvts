@@ -1,4 +1,4 @@
-  import axios from 'https://cdn.jsdelivr.net/npm/axios@1.6.0/+esm';
+import axios from 'https://cdn.jsdelivr.net/npm/axios@1.6.0/+esm';
 
 export default class  UserClient {
   constructor(baseURL = 'http://localhost:8080'){
@@ -63,12 +63,12 @@ export default class  UserClient {
    * @param {*} refreshToken refresh token of the session.
    * @returns 
    */  
-  async singleLogout(id, refreshToken)
+  async singleLogout(userId, refreshToken)
   {
     try{
         return await this.api.delete('/single_logout/', {
           data: { 
-            id: id,
+            user_id: userId,
             refresh_token: refreshToken
           }
         });

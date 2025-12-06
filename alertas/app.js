@@ -3,7 +3,10 @@
 const connectDB = require('./config/mongo.config');
 
 const viajesCompletadosConsumer = require('./infrastructure/consumer/viajes.completados.consumer');
-const alertPublisher = require('./infrastructure/publisher/alertas.publisher');
+const congestionesConsumer = require('./infrastructure/consumer/congestiones.consumer');
+
+const alertViajesCompletadosPublisher = require('./infrastructure/publisher/alert.viajes.publisher');
+const alertCongestionesPublisher = require('./infrastructure/publisher/alert.congestiones.publisher');
 
 require("dotenv").config();
 
@@ -25,10 +28,11 @@ app.use('/api/v1/alerts', alertsRouter);
 
 async function initializeConsumers() {
     await viajesCompletadosConsumer.startConsuming();
+    await congestionesConsumer.startConsuming();
 }
 
 async function initializePublishers() {
-    await alertPublisher.initialize();
+    await alertViajesCompletadosPublisher.initialize();
 }
 
 (async () => {
