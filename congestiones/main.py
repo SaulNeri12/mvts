@@ -1,6 +1,5 @@
 #clase main.py
 
-# Ahora importamos directamente desde el nombre del subpaquete, ya que '/app/app' está en el PYTHONPATH
 from config.consul import start_consul_connection
 from config.rabbitmq import start_rabbit
 from service.congestiones_service import start_congestiones_service

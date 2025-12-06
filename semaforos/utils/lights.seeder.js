@@ -1,3 +1,5 @@
+
+//Clase semaforos/utils/lights.seeder.js
 const mongoose = require('mongoose');
 const SemaforoModel = require('../models/SemaforoModel');
 

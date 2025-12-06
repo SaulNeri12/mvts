@@ -5,9 +5,10 @@ const AlertSchema = new mongoose.Schema({
     title: { type: String, required: true },
     type: {
       type: String,
-      enum: ['viaje_completado', 'congestiones'],
+      enum: ['viaje_completado', 'congestion'],
       required: true 
     },
+    data: { type: Object, required: false  },
     timestamp: { type: Date }
 }, {
   // keep versionKey (default) but hide __v when converting to JSON/Object
