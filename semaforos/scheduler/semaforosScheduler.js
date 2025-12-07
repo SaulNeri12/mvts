@@ -14,13 +14,12 @@ function startSemaforosScheduler() {
         }
         
         semaforos.forEach((semaforo, id) => {
-            
+
             if (semaforo.getHoldState() !== "") {
                 console.log(`[Scheduler] Semáforo ${id} en hold: ${semaforo.getHoldState()}. Salta ciclo automático.`);
+                semaforo.next();
                 return;
             }
-            
-            semaforo.next();
 
             const estado = semaforo.getState();
             
