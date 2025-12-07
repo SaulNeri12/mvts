@@ -15,11 +15,11 @@ function startSemaforosScheduler() {
         
         // Itera sobre el mapa de semáforos
         semaforos.forEach((semaforo, id) => {
-            semaforo.next(); // Cambia al siguiente estado
-            const nuevoEstado = semaforo.getState();
-            
-            // Envía evento a RabbitMQ
-            publishStateChange(id, nuevoEstado);
+            if (semaforo.getHoldState() == "") {
+                semaforo.next();
+                const nuevoEstado = semaforo.getState();
+                publishStateChange(id, nuevoEstado);
+            }
         });
 
     }, INTERVAL_MS);

@@ -27,6 +27,8 @@ def cb_estados_semaforos_consumer(ch, method, properties, body):
     """
     mensaje = body.decode('utf-8')
     
+    #print(f"#### MENSAJE: {mensaje}")
+    
     try:
         data_semaforo = json.loads(mensaje)
     except json.JSONDecodeError as e:

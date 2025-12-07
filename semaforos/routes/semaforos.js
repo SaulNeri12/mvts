@@ -4,7 +4,7 @@ var router = express.Router();
 const SemaforoModel = require('../models/SemaforoModel');
 const { semaforos } = require('../store/semaforosStore'); // Memoria
 const SemaforoDomain = require('../domain/Semaforo');
-const { publishStateChange } = require('../messaging/rabbit'); // Para notificar el cambio manual
+const { publishStateChange, publishManualStateChange } = require('../messaging/rabbit'); // Para notificar el cambio manual
 
 // --- CREAR SEMÁFORO (POST) ---
 router.post('/', async (req, res) => {
@@ -54,7 +54,7 @@ router.patch('/:code', async (req, res) => {
 
 // --- CAMBIAR ESTADO MANUALMENTE (POST) ---
 // Ruta: /api/semaforos/:id/estado
-router.post('/:code/estado', (req, res) => {
+router.post('/:code/state', (req, res) => {
     try {
         const { code } = req.params;
         const { estado } = req.body; // Espera "verde", "rojo", 0, 1, etc.
@@ -69,7 +69,7 @@ router.post('/:code/estado', (req, res) => {
         const nuevoEstado = semaforo.forceState(estado);
 
         // Notificar a RabbitMQ inmediatamente (para que los otros servicios se enteren ya)
-        publishStateChange(estado, nuevoEstado);
+        publishStateChange(code, nuevoEstado);
 
         console.log(`[API-MANUAL] Semáforo ${code} forzado a: ${nuevoEstado}`);
         res.json({
@@ -83,6 +83,40 @@ router.post('/:code/estado', (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
+
+// --- CAMBIAR ESTADO MANUALMENTE (POST) ---
+// Ruta: /api/semaforos/:id/estado
+router.post('/:code/hold/state', (req, res) => {
+    try {
+        const { code } = req.params;
+        const { estado } = req.body; // Espera "verde", "rojo", 0, 1, etc.
+
+        // Verificar si existe en memoria (el semáforo debe estar vivo)
+        const semaforo = semaforos.get(code);
+        if (!semaforo) {
+            return res.status(404).json({ error: 'El semáforo no está activo en memoria.' });
+        }
+
+        // Forzar el cambio de estado
+        const nuevoEstado = semaforo.holdState(estado);
+
+        // Notificar a RabbitMQ inmediatamente (para que los otros servicios se enteren ya)
+        publishManualStateChange(code, nuevoEstado);
+
+        console.log(`[API-MANUAL] Semáforo ${code} forzado a: ${nuevoEstado}`);
+        res.json({
+            code,
+            estado_anterior: "...",
+            nuevo_estado: nuevoEstado,
+            mensaje: "Cambio manual aplicado exitosamente"
+        });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 // --- ELIMINAR SEMÁFORO (DELETE) ---
 router.delete('/:code', async (req, res) => {
