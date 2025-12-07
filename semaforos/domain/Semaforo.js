@@ -63,21 +63,24 @@ class Semaforo {
 
     holdState(input) {
         const val = String(input).toLowerCase().trim();
+        let stateToSet = null;
 
         if (['verde', 'green', '0'].includes(val)) {
-            this.setState(this.green);
-            return 'verde';
+            stateToSet = this.green;
         } else if (['amarillo', 'yellow', '1'].includes(val)) {
-            this.setState(this.yellow);
-            return 'amarillo';
+            stateToSet = this.yellow;
         } else if (['rojo', 'red', '2'].includes(val)) {
-            this.setState(this.red);
-            return 'rojo';
+            stateToSet = this.red;
         } else {
             this.holdManualState = null;
+            return ""; 
         }
 
-        return "";
+        this.setState(stateToSet);
+        
+        this.holdManualState = stateToSet;
+
+        return stateToSet.getName();
     }
 }
 

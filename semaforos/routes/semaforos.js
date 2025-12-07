@@ -102,7 +102,7 @@ router.post('/:code/hold/state', (req, res) => {
         const nuevoEstado = semaforo.holdState(estado);
 
         // Notificar a RabbitMQ inmediatamente (para que los otros servicios se enteren ya)
-        publishManualStateChange(code, nuevoEstado);
+        publishStateChange(code, nuevoEstado);
 
         console.log(`[API-MANUAL] Semáforo ${code} forzado a: ${nuevoEstado}`);
         res.json({

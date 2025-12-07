@@ -58,16 +58,16 @@ RUTA = [
                     "longitude": "-110.3498164886488",
                     "is_occupied": False,
                 },
+                {
+                    "latitude": "30.97278024833265",
+                    "longitude": "-110.3504071944602",
+                    "is_occupied": False,
+                }
             ],
         },
         {
             "semaforo": {"codigo": "SM-02" },
             "tramo": [
-                {
-                    "latitude": "30.97278024833265",
-                    "longitude": "-110.3504071944602",
-                    "is_occupied": False,
-                },
                 {
                     "latitude": "30.97274750225728",
                     "longitude": "-110.3510881215609",

@@ -25,7 +25,7 @@ POSICIONES_VEHICULOS_QUEUE  = os.getenv("COLA_POSICIONES_VEHICULOS", "queue.tele
 EXCHANGE_VIAJES_COMPLETADOS = os.getenv("EXCHANGE_VIAJES_COMPLETADOS_VEHICULOS", "exchange.telemetria.vehiculos.viajes.completados")
 VIAJES_COMPLETADOS_QUEUE = os.getenv("VIAJES_COMPLETADOS_VEHICULOS_QUEUE", "queue.telemetria.vehiculos.viajes.completados")
 
-ESTADOS_SEMAFOROS_QUEUE    = os.getenv("COLA_ESTADO_SEMAFOROS", "queue.cambio.estados.semaforos")
+#ESTADOS_SEMAFOROS_QUEUE    = os.getenv("COLA_ESTADO_SEMAFOROS", "queue.cambio.estados.semaforos")
 SEMAFOROS_ESTADO_EXCHANGE = os.getenv("EXCHANGES_SEMAFOROS_ESTADO", "exchange.semaforos.estado")
 
 def init_exchanges_and_queues():
