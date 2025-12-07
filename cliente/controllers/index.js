@@ -15,8 +15,6 @@ form.onsubmit = (e)=>{
 
   e.preventDefault(); //preventing from form submitting
 
-  console.log("Login button clicked");
-
   checkId(); //calling checkEmail function
   checkPass(); //calling checkPass function
 
@@ -79,11 +77,6 @@ async function handleLogin() {
   try {
     let email = eInput.value;
     let password = pInput.value;
-
-    // For debugging purposes
-    console.log("Email:", email);
-    console.log("Password:", password);
-
     const user = await userClient.login(email, password)
     console.log("User logged in:", user);
 
