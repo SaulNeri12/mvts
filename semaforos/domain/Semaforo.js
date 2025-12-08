@@ -11,6 +11,8 @@ class Semaforo {
         this.yellow = new YellowState(this);
         this.red = new RedState(this);
 
+        this.holdManualState = null;
+
         // Estado inicial
         this.currentState = this.green;
     }
@@ -26,6 +28,14 @@ class Semaforo {
 
     getState() {
         return this.currentState.getName();
+    }
+
+    getHoldState() {
+        if (this.holdManualState) {
+            return this.holdManualState.getName();
+        }
+
+        return "";
     }
 
     /**
@@ -49,6 +59,28 @@ class Semaforo {
         }
 
         throw new Error(`Estado inválido: ${input}. Use 'verde', 'amarillo' o 'rojo'.`);
+    }
+
+    holdState(input) {
+        const val = String(input).toLowerCase().trim();
+        let stateToSet = null;
+
+        if (['verde', 'green', '0'].includes(val)) {
+            stateToSet = this.green;
+        } else if (['amarillo', 'yellow', '1'].includes(val)) {
+            stateToSet = this.yellow;
+        } else if (['rojo', 'red', '2'].includes(val)) {
+            stateToSet = this.red;
+        } else {
+            this.holdManualState = null;
+            return ""; 
+        }
+
+        this.setState(stateToSet);
+        
+        this.holdManualState = stateToSet;
+
+        return stateToSet.getName();
     }
 }
 
