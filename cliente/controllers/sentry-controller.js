@@ -114,10 +114,40 @@ function addLightsToMap(lights) {
     if(!lights) return;
     
     lights.forEach(light => {
-        removeLightFromMap(light);
-        addLightToMap(light);
+        updateMapLights(light);
     });
 }
+
+function updateMapLights(light) {
+    let code = light.code || light.id
+    let estado;
+    if(light.estado){
+        estado = light.estado.charAt(0).toUpperCase() + light.estado.slice(1) || 'None';
+    }
+
+    const markerPopUpHTMl = `
+        <div class="popup-container">
+            <span class="light-popup-code ">${code}</span>
+            <span class="light-popup-state ${light.estado}">
+                ${estado} 
+            </span>
+        </div>
+    `
+    if(lightsMarkers[code]){
+        lightsMarkers[code].setPopupContent(markerPopUpHTMl);
+        return
+    }
+
+    lightsMarkers[code] = L.marker([light.position.latitude, light.position.longitude], 
+        { 
+            icon: lightsIcon,
+            riseOnHover: true,
+            riseOffset: 250
+        })
+    .bindPopup(markerPopUpHTMl)
+    .addTo(map);
+}
+
 
 async function initNotifications(){
     try{
@@ -135,64 +165,6 @@ function addNotificationsToTable(notifications) {
     notifications.forEach(notification => {
         addNotificationToTable(notification)
     });
-}
-
-function handletelemetryUpdate(message){
-    const vehicle = JSON.parse(message);
-    removeVehicleFromMap(vehicle);
-    addVehicleToMap(vehicle);
-}
-
-function removeVehicleFromMap(vehicle) {
-    if (vehicleMarkers[vehicle.code]) {
-        map.removeLayer(vehicleMarkers[vehicle.code]);
-        delete vehicleMarkers[vehicle.code];
-    }
-}
-
-function addVehicleToMap(vehicle) {
-    const marker = L.marker([vehicle.latitude, vehicle.longitude], { icon: vehicleIcon })
-    .bindPopup(vehicle.code)
-    .addTo(map);
-    vehicleMarkers[vehicle.code] = marker;
-}
-
-function handlelightsUpdate(message){
-    const light = JSON.parse(message);
-    updateLightState(light.id, light.estado);
-}
-
-function updateLightState(code, color) {
-    const $state = $(`#light-state-${code}`);
-    if ($state.length === 0) return;
-    
-    const colors = {
-        "rojo": "#fa3d3dff",
-        "amarillo": "#f5e727ff",
-        "verde": "#089e08"
-    }
-
-    $state.css("background-color",  colors[color] || "gray");
-}
-
-function removeLightFromMap(light) {
-    if (lightsMarkers[light.code]) {
-        map.removeLayer(lightsMarkers[light.code]);
-        delete lightsMarkers[light.code];
-    }
-}
-
-function addLightToMap(light) {
-    const marker = L.marker([light.position.latitude, light.position.longitude], { icon: lightsIcon, riseOnHover: true, riseOffset: 250 })
-    .bindPopup(light.code)
-    .addTo(map);
-    lightsMarkers[light.code] = marker;
-}
-
-function handleTravelCompletedUpdate(message) {
-    const notification = message
-    addNotificationToTable(notification);
-    showNotification({text: notification.title});
 }
 
 function addNotificationToTable(notification){
@@ -216,6 +188,88 @@ function addNotificationToTable(notification){
     $notificationsTable.prepend(row);
 }
 
+function updateVehicleInMap(vehicle) {
+    
+    const markerPopUpHTMl = `
+        <div class="popup-container">
+            <span class="light-popup-code ">${vehicle.code}</span>
+            <span class="light-popup-state ">
+            ${new Date(vehicle.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </span>
+        </div>
+    `
+
+    if (vehicleMarkers[vehicle.code]) {
+        // update marker position
+        return vehicleMarkers[vehicle.code]
+            .setLatLng([vehicle.latitude, vehicle.longitude])
+            .setPopupContent(markerPopUpHTMl);
+    }
+
+    // create marker if doesnt exist
+    vehicleMarkers[vehicle.code] = L.marker(
+        [vehicle.latitude, vehicle.longitude],
+        { icon: vehicleIcon }
+    )
+    .bindPopup(markerPopUpHTMl)
+    .addTo(map);
+}
+
+function updateLightState(light) {
+    const $state = $(`#light-state-${light.id || light.code}`);
+    if ($state.length === 0) return;
+    
+    const colors = {
+        "rojo": "#fa3d3dff",
+        "amarillo": "#c4b703ff",
+        "verde": "#089e08"
+    }
+
+    $state.css("background-color",  colors[light.estado]);
+}
+
+function updateLastUpdateCounter(){
+    const time = new Date().toLocaleTimeString();
+    $('#last-update-time').text(time);
+}
+
+// -- HANDLERS -- 
+
+function handletelemetryUpdate(message){
+    const vehicle = JSON.parse(message);
+    updateVehicleInMap(vehicle);
+}
+
+function handlelightsUpdate(message){
+    const light = JSON.parse(message);
+    updateLightState(light);
+    updateMapLights(light);
+    updateLastUpdateCounter();
+}
+
+function handleTravelCompletedUpdate(notification) {
+    addNotificationToTable(notification);
+    showNotification({text: notification.title});
+}
+
+function handleUserLogout(){
+    try{
+        // Call the rest api to log out
+
+        
+        // Call the api to cancell all the manual control of a light
+
+        // redirect the user to the log in
+        window.location.replace('Index.html');
+    }
+    catch(error){
+        showErrorNotification(opt = {})
+    }
+}
+
+
+
+// --- NOTIFICATIONS ---
 function showNotification(opt = {}){
     Toastify({
     text: opt.text,
@@ -232,9 +286,29 @@ function showNotification(opt = {}){
     }).showToast();
 }
 
+function showErrorNotification(opt = {}){
+    Toastify({
+    text: opt.text,
+    duration: 4000,
+    //destination: "https://github.com/apvarun/toastify-js",
+    //newWindow: true,
+    close: true,
+    gravity: "top", // `top` or `bottom`
+    position: "right", // `left`, `center` or `right`
+    stopOnFocus: true, // Prevents dismissing of toast on hover
+    style: {
+        background: "linear-gradient(to right, #ee7238ff, #e72424ff)",  
+    }
+    }).showToast();
+}
 
 
-//open the logaut modal
+
+// -- DIALOGS -- 
+
+/**
+ * open the logaut modal
+ */
 btnLogout.addEventListener('click', () => {
     logautModal.showModal();
 });
@@ -246,11 +320,16 @@ btnLightsFilters.addEventListener('click', () => {
     dialogLightsFilter.showModal();
 });
 
+/**
+ * 
+ */
 btnNotificationsFilters.addEventListener('click', () => {
     dialogNotificationsFilter.showModal();
 });
 
-//log out the user
+/**
+ * log out the user
+ */
 dialogConfirmBtn.addEventListener('click', () => {
-    window.location.href = 'Index.html';
+    handleUserLogout();
 });
