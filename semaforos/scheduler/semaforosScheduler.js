@@ -21,9 +21,11 @@ function startSemaforosScheduler() {
                 return;
             }
 
+            // Publish current state, then advance the state machine so
+            // the next interval will publish the following state.
             const estado = semaforo.getState();
-            
             publishStateChange(id, estado);
+            semaforo.next();
         });
 
     }, INTERVAL_MS);
