@@ -12,7 +12,6 @@ let connection;
  * sirve para dirigir los eventos al servicio de telemetria
  */
 const SEMAFOROS_ESTADO_EXCHANGE = process.env.SEMAFOROS_ESTADO_EXCHANGE || 'exchange.semaforos.estado';
-const CAMBIOS_MANUAL_ESTADO_EXCHANGE = process.env.SEMAFOROS_ESTADO_EXCHANGE || 'exchange.semaforos.manual.estado';
 
 async function connectRabbit() {
     const amqpUrl = `amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:5672`;
@@ -26,7 +25,6 @@ async function connectRabbit() {
             //await channel.assertQueue(QUEUE_NAME, { durable: true });
 
             await channel.assertExchange(SEMAFOROS_ESTADO_EXCHANGE, 'fanout', { durable: true });
-            await channel.assertExchange(CAMBIOS_MANUAL_ESTADO_EXCHANGE, 'fanout', { durable: true });
 
             console.log(`Conexión a RabbitMQ y cola '${QUEUE_NAME}' lista.`);
             return;
@@ -47,8 +45,6 @@ function publishStateChange(id, estado) {
         ts: Date.now() 
     });
 
-    console.log("#### mensaje automatico semaforo: " + message);
-
     try {
         // publica mensajes al exchange, no a una cola...
         channel.publish(
@@ -63,30 +59,4 @@ function publishStateChange(id, estado) {
     }
 }
 
-
-function publishManualStateChange(id, estado) {
-    if (!channel) return console.error(`Canal de RabbitMQ no disponible.`);
-
-    const message = JSON.stringify({ 
-        id, 
-        estado, 
-        ts: Date.now() 
-    });
-
-    console.log("#### mensaje manual semaforo: " + message);
-
-    try {
-        // publica mensajes al exchange, no a una cola...
-        channel.publish(
-            CAMBIOS_MANUAL_ESTADO_EXCHANGE,
-            '',
-            Buffer.from(message),
-            { persistent: true } 
-        );
-        console.log(`Publicado: Semáforo ${id} -> ${estado}`);
-    } catch (e) {
-        console.error(`Error publicando mensaje para ${id}:`, e.message);
-    }
-}
-
-module.exports = { connectRabbit, publishStateChange, publishManualStateChange };
+module.exports = { connectRabbit, publishStateChange };

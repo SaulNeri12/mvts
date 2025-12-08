@@ -40,7 +40,7 @@ def actualizar_estado(codigo: str, nuevo_estado: str) -> bool:
         
         return False
 
-def obtener_estado(codigo: str) -> str:
+def obtener_estado(codigo: str) -> Optional[str]:
     with semaforos_lock:
         for s in semaforos:
             if s.codigo == codigo:

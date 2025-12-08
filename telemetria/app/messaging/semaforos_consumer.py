@@ -10,29 +10,22 @@ import os
 
 load_dotenv() 
 
-ESTADOS_SEMAFOROS_EXCHANGE    = os.getenv("EXCHANGE_SEMAFOROS_ESTADOS", "exchange.semaforos.estado")
+ESTADOS_SEMAFOROS_QUEUE    = os.getenv("COLA_ESTADO_SEMAFOROS", "queue.cambio.estados.semaforos")
 
 def init():
     semaforos = semaforos_service.get_all()
     for sem in semaforos:
         memory_sem = Semaforo(sem["code"], "none")
         semaforos_store.agregar_semaforo(memory_sem)
-    print(f"[rabbitMQ] consumiento eventos de: {ESTADOS_SEMAFOROS_EXCHANGE}")
-    
-    start_consumer(
-        callback=cb_estados_semaforos_consumer, 
-        queue_name=None,
-        exchange_name=ESTADOS_SEMAFOROS_EXCHANGE,
-        routing_key=''
-    )
+    print(f"[rabbitMQ] consumiento eventos de: {ESTADOS_SEMAFOROS_QUEUE}")
+    start_consumer(ESTADOS_SEMAFOROS_QUEUE, cb_estados_semaforos_consumer)
+
 
 def cb_estados_semaforos_consumer(ch, method, properties, body):
     """
     Recibe los cambios de estado constantes.
     """
     mensaje = body.decode('utf-8')
-    
-    #print(f"#### MENSAJE: {mensaje}")
     
     try:
         data_semaforo = json.loads(mensaje)

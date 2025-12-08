@@ -93,19 +93,12 @@ def vehicle_movement_worker(vehicle_code):
             if semaforo_data and semaforo_data.get("codigo"):
                 codigo_semaforo = semaforo_data["codigo"]
                 estado = semaforos_store.obtener_estado(codigo_semaforo)
-                #rint(f"##### ESTADO: {estado}")
-                
-                if estado in ["rojo", "none", None]: 
-                    can_move = False
-                    estado_log = estado if estado is not None else "NO ENCONTRADO/None" 
-                    print(f"[WORKER] Vehiculo {vehicle_code} detenido. Semáforo {codigo_semaforo} en {estado_log}")
-
-                elif estado in ["verde", "amarillo"]:
-                    can_move = True
-                else:
-                    can_move = False
-                    print(f"[WORKER] ESTADO DESCONOCIDO. Deteniendo {vehicle_code}. Semáforo {codigo_semaforo} en {estado}")
-                    
+                if estado:
+                    if estado in ["verde", "amarillo"]:
+                        can_move = True
+                    else:
+                        can_move = False
+                        print(f"[WORKER] Vehiculo {vehicle_code} detenido. Semáforo {codigo_semaforo} en {estado}")
             if can_move:
                 new_position = move_vehicle_to_next_point(vehicle)
                 

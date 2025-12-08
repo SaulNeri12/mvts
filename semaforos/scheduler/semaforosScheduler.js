@@ -13,17 +13,13 @@ function startSemaforosScheduler() {
             return;
         }
         
+        // Itera sobre el mapa de semáforos
         semaforos.forEach((semaforo, id) => {
-
-            if (semaforo.getHoldState() !== "") {
-                console.log(`[Scheduler] Semáforo ${id} en hold: ${semaforo.getHoldState()}. Salta ciclo automático.`);
-                semaforo.next();
-                return;
-            }
-
-            const estado = semaforo.getState();
+            semaforo.next(); // Cambia al siguiente estado
+            const nuevoEstado = semaforo.getState();
             
-            publishStateChange(id, estado);
+            // Envía evento a RabbitMQ
+            publishStateChange(id, nuevoEstado);
         });
 
     }, INTERVAL_MS);

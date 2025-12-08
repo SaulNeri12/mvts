@@ -123,56 +123,24 @@ def publish_to_exchange(exchange_name, message, routing_key=""):
 
     print(f"[!] No se pudo publicar el mensaje tras {5} intentos.")
 
-def start_consumer(callback, queue_name=None, exchange_name=None, routing_key=''):
-    """
-    Inicia un consumidor de RabbitMQ.
-    
-    Permite tres modos principales:
-    1. Cola nombrada persistente (queue_name != None, exchange_name = None).
-    2. Cola temporal anónima vinculada a un Exchange (queue_name = None, exchange_name != None).
-    3. Cola nombrada vinculada a un Exchange (queue_name != None, exchange_name != None).
 
-    Args:
-        callback: Función a ejecutar al recibir un mensaje.
-        queue_name (str, opcional): Nombre de la cola a usar. Si es None y hay exchange, se usa una cola temporal.
-        exchange_name (str, opcional): Nombre del exchange a escuchar.
-        routing_key (str): Clave de ruteo (útil para exchanges direct o topic).
-    """
-    
+def start_consumer(queue_name, callback):
+    #global connection, channel
     while True:
-        conn, channel = None, None
         try:
             conn, channel = connect_to_rabbitmq(is_consumer=True)
-
-            if exchange_name:
-                channel.exchange_declare(exchange=exchange_name, exchange_type='fanout', durable=True)
-                print(f"[RABBITMQ] Escuchando exchange: {exchange_name}")
-
-            if queue_name:
-                result = channel.queue_declare(queue=queue_name, durable=True)
-                final_queue_name = queue_name
-            else:
-                result = channel.queue_declare(queue='', exclusive=True) 
-                final_queue_name = result.method.queue
-                print(f"[RABBITMQ] Cola temporal creada: {final_queue_name}")
-
-            if exchange_name:
-                channel.queue_bind(
-                    exchange=exchange_name, 
-                    queue=final_queue_name, 
-                    routing_key=routing_key
-                )
-                print(f"[RABBITMQ] Cola '{final_queue_name}' vinculada a exchange '{exchange_name}' con key '{routing_key}'")
+            
+            channel.queue_declare(queue=queue_name, durable=True)
 
             channel.basic_qos(prefetch_count=1)
 
             channel.basic_consume(
-                queue=final_queue_name,
+                queue=queue_name,
                 on_message_callback=callback,
                 auto_ack=False
             )
 
-            print(f"[!] Consumidor escuchando en cola: {final_queue_name}")
+            print(f"[!] Consumidor escuchando {queue_name}")
             channel.start_consuming()
 
         except Exception as e:
