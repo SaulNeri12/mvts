@@ -1,4 +1,4 @@
-const { RepositoryError } = require('../errors/errors');
+const { RepositoryError, NotFoundError } = require('../errors/errors');
 
 /**
  * Repository for tracking manual control assignments of lights by users.
@@ -91,15 +91,18 @@ exports.validateMaximumInControll = (userId) => {
  */
 exports.freeManualControll = (userId, lightCode) => 
 {
-    if (!userId || !lightCode) return false;
     const userLights = manualLights[userId];
-    if (!Array.isArray(userLights) || userLights.length === 0) return false;
+    if (userLights.length === 0) {
+        throw new NotFoundError('El usuario brindado no cuenta con semaforos a liberar');
+    }
 
     const idx = userLights.indexOf(lightCode);
-    if (idx === -1) return false;
+    if (idx === -1) {
+        throw new NotFoundError('El usuario brindado no cuenta con el semaforo a liberar');
+    }
     userLights.splice(idx, 1);
     if (userLights.length === 0) delete manualLights[userId];
-    return true;
+    console.log(manualLights[userId]);
 };
 
 /**
