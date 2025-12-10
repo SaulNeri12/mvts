@@ -56,6 +56,7 @@ module.exports = {
   UnauthorizedError,
   RepositoryError,
   TooManySessionsError,
+  GatewayError,
   InternalError,
   ConflictError
 };

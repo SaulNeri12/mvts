@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { GatewayError } = require('../errors/errors');
+const { GatewayError } = require('../../errors/errors');
 
 class LightsService {
   constructor(){
@@ -13,15 +13,8 @@ class LightsService {
   async changeLightState(lightCode, state)
   {
     try{
-        return await this.api.post('/api/v1/semaforos/:code/hold/state', { 
-            estado: state,
-          },
-          {
-            params: {
-              code: lightCode
-            }
-          }
-        );
+        return await this.api.post(`/api/v1/semaforos/${lightCode}/hold/state`,
+          { estado: state });
     }
     catch(error){
       const errorMessage = error.response?.data;

@@ -56,7 +56,14 @@ exports.validateIfTakenByUser = (userId, lightCode) => {
     return userLights.includes(lightCode);
 };
 
-
+exports.validateIfTaken = (lightCode) => {
+    for (const lights of Object.values(manualLights)) {
+        if (Array.isArray(lights) && lights.includes(lightCode)) {
+            return true;
+        }
+    }
+    return false;
+};
 
 
 /**  

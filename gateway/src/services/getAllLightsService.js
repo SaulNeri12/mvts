@@ -16,7 +16,7 @@ exports.getAllLights = async () =>
 
 function addTakenAttribute(lights) {
     lights.forEach(light => {
-        light.taken = manualLightsRepository.validateIfAlreadyTaken(light.code);
+        light.taken = manualLightsRepository.validateIfTaken(light.code);
     });
     return lights;
 }
