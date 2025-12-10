@@ -30,7 +30,7 @@ exports.emitLightFreed = async(lightData) =>
 {
     try{
         const io = getIO();
-        io.emit('light_freed_update', lightData);
+        await io.emit('light_freed_update', lightData);
     }
     catch (error){
         console.log('Error emitting light freed update:', error);
