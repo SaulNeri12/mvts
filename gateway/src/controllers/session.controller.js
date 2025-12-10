@@ -30,7 +30,7 @@ exports.handleTokenRefresh = async (req, res, next) =>
  */
 exports.handleLogout = async (req, res, next) =>
 {
-    const { user_id, refresh_token } = req.body;
+    const { user_id, refresh_token } = req.query;
     try {
         await logoutService.singleLogout(user_id, refresh_token);
         res.status(200).json();

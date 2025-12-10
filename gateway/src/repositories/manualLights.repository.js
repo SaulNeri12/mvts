@@ -82,6 +82,14 @@ exports.validateMaximumInControll = (userId) => {
 };
 
 
+exports.getLightsByUserId = (userId) =>
+{
+    const userLights = manualLights[userId];
+    if(!userLights || userLights.length === 0) return [];
+    return userLights;
+}
+
+
 /**
  * Free a single manual control assignment for a user.
  *
