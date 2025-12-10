@@ -8,6 +8,6 @@ router.use(rateLimiter.private());
 router.get('/', lightsController.handleGetAllLights); // Route to handle incoming lights messages
 router.post('/manual/control', lightsController.handleTakeManualControl);  
 router.post('/change/state', lightsController.handleLightStateChange);
-router.delete('/light/manual/control', lightsController.handleReleaseManualControl);
+router.delete('/manual/control', lightsController.handleReleaseManualControl);
 
 module.exports = router;
