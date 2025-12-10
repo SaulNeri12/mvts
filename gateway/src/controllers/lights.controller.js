@@ -3,6 +3,7 @@ const lightsClient = require('../infrestructure/client/lights.client');
 const takeManualLightService = require('../services/takeManualLightControll.service');
 const getAllLightsService = require('../services/getAllLightsService');
 const changeLightStateService = require('../services/changeLightState.service');
+const freeManualLightControllService = require('../services/freeManualLightControll.service');
 
 
 /**
@@ -74,8 +75,9 @@ exports.handleGetAllLights = async (req, res, next) => {
  */
 exports.handleReleaseManualControl = async (req, res, next) => {
     try{
-        const { light_id } = req.body;
-        await lightsClient.releaseManualControl(light_id);
+        const { user_id, light_id } = req.query;
+        await freeManualLightControllService.releaseManualControl(user_id, light_id);
+        res.status(200).json();
     } catch (error) {
         next(error);
     }
