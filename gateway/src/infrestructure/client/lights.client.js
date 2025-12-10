@@ -1,6 +1,7 @@
 const axios = require('axios');
+const { GatewayError } = require('../errors/errors');
 
-class SessionService {
+class LightsService {
   constructor(){
     this.api = axios.create({
       baseURL: 'http://semaforos:3050',
@@ -9,18 +10,22 @@ class SessionService {
     });
   }
 
-  async changeLightState(lightId, newState)
+  async changeLightState(lightCode, state)
   {
     try{
-        return await this.api.patch('url', { 
-            light_id: lightId,
-            new_state: newState
+        return await this.api.post('/api/v1/semaforos/:code/hold/state', { 
+            estado: state,
+          },
+          {
+            params: {
+              code: lightCode
+            }
           }
         );
     }
     catch(error){
       const errorMessage = error.response?.data;
-      throw new Error(errorMessage || 'Error al intentar cerrar sesion intente de nuevo');
+      throw new GatewayError(errorMessage || 'Error al intentar cambiar el estado del semaforo');
     }
   }
 
@@ -32,10 +37,10 @@ class SessionService {
     }catch(error){
       console.log(error);
       const errorMessage = error.response?.data;
-      throw new Error(errorMessage || 'Error al obtener los semaforos' );
+      throw new GatewayError(errorMessage || 'Error al obtener los semaforos' );
     }
   }
 
 }
 
-module.exports = new SessionService();
+module.exports = new LightsService();
