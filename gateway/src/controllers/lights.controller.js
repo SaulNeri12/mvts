@@ -1,5 +1,7 @@
 const lightsEmitter = require('../emmiters/lights.emitter');
 const lightsClient = require('../infrestructure/client/lights.client');
+const takeManualLightService = require('../services/takeManualLightControll.service');
+const getAllLightsService = require('../services/getAllLightsService');
 
 
 /**
@@ -25,7 +27,8 @@ exports.handleLightsMessage = async (message) => {
 exports.handleTakeManualControl = async (req, res, next) => {
     try{
         const {user_id, light_id} = req.body;
-        await lightsClient.takeManualControl(user_id, light_id);
+        await takeManualLightService.takeLightManual(user_id, light_id);
+        res.status(200).json({ message: "Light successfully taken" });
     } catch (error) {
         next(error);
     }
@@ -54,7 +57,7 @@ exports.handleLightStateChange = async (req, res, next) => {
  */
 exports.handleGetAllLights = async (req, res, next) => {
     try{
-        const lights = await lightsClient.getAllLights();
+        const lights = await getAllLightsService.getAllLights();
         return res.status(200).json(lights);
     } catch (error) {
         next(error);
