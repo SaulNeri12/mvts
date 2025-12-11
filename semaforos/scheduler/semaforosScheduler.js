@@ -14,16 +14,16 @@ function startSemaforosScheduler() {
         }
         
         semaforos.forEach((semaforo, id) => {
+            const estado = semaforo.getState();
 
             if (semaforo.getHoldState() !== "") {
                 console.log(`[Scheduler] Semáforo ${id} en hold: ${semaforo.getHoldState()}. Salta ciclo automático.`);
-                semaforo.next();
+                publishStateChange(id, estado);
                 return;
             }
 
             // Publish current state, then advance the state machine so
             // the next interval will publish the following state.
-            const estado = semaforo.getState();
             publishStateChange(id, estado);
             semaforo.next();
         });
