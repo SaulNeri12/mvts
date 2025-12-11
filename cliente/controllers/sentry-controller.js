@@ -18,7 +18,7 @@ let dialogNotificationsFilter = document.getElementById('notification-filter-dia
 let map;
 let vehicleIcon;
 let lightsIcon;
-let vehicleMarkers = {};    
+let vehicleMarkers = {};
 let lightsMarkers = {};
 
 (async() => {
