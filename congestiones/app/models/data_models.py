@@ -5,44 +5,43 @@ from datetime import datetime
 from typing import Dict
 import threading
 
-# estructura del mensaje que entra desde telemetria
+# --- Estructura del mensaje entrante desde Telemetria (Posición) ---
 @dataclass
 class PosicionVehiculoData:
-    """Representa el mensaje de telemetría de un vehículo (solo posición)."""
     code: str
     latitude: str
     longitude: str
-    timestamp: str # Se recibirá como string ISO
+    timestamp: str 
 
-# estructura para almacenar el estado temporal del VEHICULO en memoria
+# --- Estructura para almacenar el estado temporal del VEHÍCULO en memoria ---
 @dataclass
 class EstadoVehiculoTemp:
-    """Almacena el estado reciente para el analisis de congestión."""
+    """Almacena el estado reciente para el análisis de detención."""
     ultima_latitud: float
     ultima_longitud: float
-    ultimo_semaforo_estado: str
     timestamp_ultimo_movimiento: datetime 
+    
+    ultimo_semaforo_estado: str = "N/A" 
 
-# estructura para almacenar la data de semáforos "ubicación y estado" 
+# ya no es relevante, pero se mantiene para evitar errores
 @dataclass
 class SemaforoUbicacion:
-    """Representa un semáforo y su ubicación/estado en la memoria local."""
+    """Representa un semáforo (Ahora solo almacena ID para compatibilidad si es necesario)."""
     codigo: str
     latitud: float = 0.0 
     longitud: float = 0.0 
-    estado: str = "desconocido"
+    estado: str = "N/A"
     timestamp_actualizacion: datetime = field(default_factory=datetime.now)
 
-# estructura del mensaje que manda a ALERTAS y REPORTES
+# --- Estructura del mensaje saliente hacia Alertas y Reportes ---
 @dataclass
 class CongestionAlertaData:
-    """Representa la alerta de congestión detectada."""
     id_vehiculo: str
     latitud: float
     longitud: float
     timestamp_inicio: str 
     duracion_segundos: int
-    motivo: str = "Detenido tras luz verde"
+    motivo: str = "Detenido críticamente por 24 segundos."
 
 # Diccionarios y Locks Globales
 ESTADOS_VEHICULOS: Dict[str, EstadoVehiculoTemp] = {}
