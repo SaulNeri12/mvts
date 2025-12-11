@@ -28,8 +28,8 @@ exports.handleLightsMessage = async (message) => {
  */
 exports.handleTakeManualControl = async (req, res, next) => {
     try{
-        const {user_id, light_id} = req.body;
-        await takeManualLightService.takeLightManual(user_id, light_id);
+        const {user_id, light_code} = req.body;
+        await takeManualLightService.takeLightManual(user_id, light_code);
         res.status(200).json({ message: "Light successfully taken" });
     } catch (error) {
         next(error);
@@ -75,10 +75,10 @@ exports.handleGetAllLights = async (req, res, next) => {
  */
 exports.handleReleaseManualControl = async (req, res, next) => {
     try{
-        const { user_id, light_id } = req.query;
-        await freeManualLightControllService.releaseManualControl(user_id, light_id);
+        const { user_id, light_code } = req.query;
+        await freeManualLightControllService.releaseManualControl(user_id, light_code);
         res.status(200).json();
-    } catch (error) {
+    } catch (error) {   
         next(error);
     }
 }
