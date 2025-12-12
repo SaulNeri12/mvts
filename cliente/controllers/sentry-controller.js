@@ -62,9 +62,17 @@ async function initManualLights(){
     try{
         const userManualLights = await lightsClient.getManualLights(user.id);
         if(!userManualLights || userManualLights.length === 0) return;
-        
+
+        const colors = {
+            "gray": "gray",
+            "rojo": "#fa3d3dff",
+            "amarillo": "#c4b703ff",
+            "verde": "#089e08"
+        }
+
         userManualLights.forEach((light)=> {
-            insertManualControllLightRow(light.code, light.section, light.status);
+            const state = colors[light.status];
+            insertManualControllLightRow(light.code, light.section, state);
         });
     }catch(error){
 
@@ -269,7 +277,7 @@ function updateLastUpdateCounter(){
     $('#last-update-time').text(time);
 }
 
-function insertManualControllLightRow(lightCode, section, state = "gray"){
+function insertManualControllLightRow(lightCode, section, state){
     const $manualLightsTable = $('#manual-lights-table');
     const manualLightRow = `
         <tr id="manual-light-row-${lightCode}">
@@ -336,9 +344,7 @@ function handleTravelCompletedUpdate(notification) {
 function handleUserLogout(){
     try{
         // Call the rest api to log out
-
         
-        // Call the api to cancell all the manual control of a light
 
         // redirect the user to the log in
         window.location.replace('Index.html');
@@ -363,7 +369,7 @@ function handlelightFreedUpdate(lightFreed){
 async function handleTakeLightControll(lightCode, section, state = "gray") {
     try{
         await lightsClient.takeManualLightControll(user.id, lightCode, section, state);
-        insertManualControllLightRow(lightCode, section);
+        insertManualControllLightRow(lightCode, section, state);
     }
     catch(error){
         showErrorNotification({text: error.message})
