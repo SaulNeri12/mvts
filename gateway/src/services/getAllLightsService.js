@@ -1,5 +1,5 @@
 const manualLightsRepository = require('../repositories/manualLights.repository');
-const lightsClient = require('../infrestructure/client/lights.client')
+const lightsClient = require('../infrestructure/client/lights.client');
 
 exports.getAllLights = async () => 
 {
