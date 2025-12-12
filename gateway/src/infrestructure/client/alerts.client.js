@@ -44,6 +44,52 @@ class AlertsClient {
       throw new Error(errorMessage || 'Error al obtener las alertas');
     }
   }
+
+  async getAlertsAll() {
+    try {
+      const response = await this.api.get("/api/v1/alerts/all");
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al obtener las alertas');
+    }
+  }
+
+  async getViajesCompletadosByDataRange(startDate, endDate) {
+    try {
+      const response = await this.api.get(`/api/v1/alerts/viajes`, {
+        params: {
+            startDate,
+            endDate
+        }
+      });
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.error;
+      throw new Error(errorMessage || 'Error al obtener las alertas de viajes completados por rango de fecha.');
+    }
+  }
+
+  /**
+   * Obtiene alertas de tipo 'congestion' dentro de un rango de fechas.
+   * @param {string} startDate - Fecha de inicio (en formato ISO o similar).
+   * @param {string} endDate - Fecha de fin (en formato ISO o similar).
+   * @returns {Promise<any>} Datos de respuesta.
+   */
+  async getCongestionByDateRange(startDate, endDate) {
+    try {
+      const response = await this.api.get(`/api/v1/alerts/congestion`, {
+        params: {
+            startDate,
+            endDate
+        }
+      });
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.error;
+      throw new Error(errorMessage || 'Error al obtener las alertas de congestión por rango de fecha.');
+    }
+  }
 }
 
 module.exports = new AlertsClient();
