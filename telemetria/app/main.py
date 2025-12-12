@@ -28,6 +28,8 @@ VIAJES_COMPLETADOS_QUEUE = os.getenv("VIAJES_COMPLETADOS_VEHICULOS_QUEUE", "queu
 #ESTADOS_SEMAFOROS_QUEUE    = os.getenv("COLA_ESTADO_SEMAFOROS", "queue.cambio.estados.semaforos")
 SEMAFOROS_ESTADO_EXCHANGE = os.getenv("EXCHANGES_SEMAFOROS_ESTADO", "exchange.semaforos.estado")
 
+EXCHANGE_CONGESTIONES = os.getenv("EXCHANGE_CONGESTIONES", "exchange.vehiculos.congestiones")
+
 def init_exchanges_and_queues():
     """
     Configura los Exchanges y Colas usando una conexión temporal.
@@ -41,6 +43,7 @@ def init_exchanges_and_queues():
         create_fanout_exchange(channel, EXCHANGE_POSICIONES_VEHICULOS)
         create_fanout_exchange(channel, SEMAFOROS_ESTADO_EXCHANGE)
         create_fanout_exchange(channel, EXCHANGE_VIAJES_COMPLETADOS)
+        create_fanout_exchange(channel, EXCHANGE_CONGESTIONES)
         
         # definimos las colas a escuchar.
         create_queue_and_bind(channel, ESTADOS_SEMAFOROS_QUEUE, SEMAFOROS_ESTADO_EXCHANGE)

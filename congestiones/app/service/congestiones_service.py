@@ -7,27 +7,18 @@ from dataclasses import asdict
 from os import getenv
 
 from app.config.rabbitmq import start_consumer, publish_to_exchange
-from app.models.data_models import PosicionVehiculoData, EstadoVehiculoTemp, CongestionAlertaData, ESTADOS_VEHICULOS
-from app.vehicle_info_loader import get_semaforo_state, get_closest_semaforo_id 
+from app.models.data_models import PosicionVehiculoData, EstadoVehiculoTemp, CongestionAlertaData, ESTADOS_VEHICULOS 
 
-# colas y exchanges del .env
-#COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "posiciones_vehiculos")
-#EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "congestiones")
-
+# Colas y Exchanges (del .env)
 COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "queue.telemetria.vehiculos.posiciones")
-EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "exchange.vehiculos.congestiones") 
+EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "exchange.vehiculos.congestiones")
 
-#UMBRAL DE MOVIMIENTO son aprox 11 metros
-UMBRAL_MOVIMIENTO = 0.001 
-
-# TIEMPO DE DETENCION: 9 segundos, el semaforo cambia cada 10 segundos
-TIEMPO_MAXIMO_DETENIDO = 9 
-
+UMBRAL_MOVIMIENTO = 0.000001 
+TIEMPO_MAXIMO_DETENIDO = 24 
 
 def analizar_posicion(vehiculo_id: str, lat: float, lon: float, timestamp: str) -> Optional[CongestionAlertaData]:
     """
-    Implementa la regla de negocio de congestión.
-    Recibe lat/lon ya convertidos a float.
+    Detecta congestión: vehículo detenido por más de 24 segundos.
     """
     
     try:
@@ -36,66 +27,56 @@ def analizar_posicion(vehiculo_id: str, lat: float, lon: float, timestamp: str) 
         print(f"[ERROR] Timestamp inválido para {vehiculo_id}")
         return None
 
-    semaforo_relevante_id = get_closest_semaforo_id(lat, lon)
-    
-    if not semaforo_relevante_id:
-        return None 
-    
-    current_semaforo_estado = get_semaforo_state(semaforo_relevante_id)
-
     estado_previo = ESTADOS_VEHICULOS.get(vehiculo_id)
 
     if not estado_previo:
+        # Inicialización
         ESTADOS_VEHICULOS[vehiculo_id] = EstadoVehiculoTemp(
             ultima_latitud=lat, 
             ultima_longitud=lon, 
-            ultimo_semaforo_estado=current_semaforo_estado, 
-            timestamp_ultimo_movimiento=current_time 
+            timestamp_ultimo_movimiento=current_time, 
+            ultimo_semaforo_estado="N/A"
         )
         return None
 
-    # LOGICA PARA LA DETECCION
     se_movio = (abs(lat - estado_previo.ultima_latitud) > UMBRAL_MOVIMIENTO or
                 abs(lon - estado_previo.ultima_longitud) > UMBRAL_MOVIMIENTO)
     
-    if not se_movio:
-        print("[DEBUG] Detención detectada (Movimiento < UMBRAL).")
-
     if se_movio:
+       
         ESTADOS_VEHICULOS[vehiculo_id] = EstadoVehiculoTemp(
             ultima_latitud=lat, 
             ultima_longitud=lon, 
-            ultimo_semaforo_estado=current_semaforo_estado, 
-            timestamp_ultimo_movimiento=current_time
+            timestamp_ultimo_movimiento=current_time,
+            ultimo_semaforo_estado="N/A"
         )
         return None
     
-    # si NO se movio: verificar si la condición de congestión se cumple
-    estuvo_en_verde = estado_previo.ultimo_semaforo_estado.lower() == 'verde'
-
-    if estuvo_en_verde:
-        tiempo_detenido = (current_time - estado_previo.timestamp_ultimo_movimiento).total_seconds()
+   
+    tiempo_detenido = (current_time - estado_previo.timestamp_ultimo_movimiento).total_seconds()
+    
+    print(f"TIEMPO DETENIDO: {tiempo_detenido}")
+    
+    if tiempo_detenido >= TIEMPO_MAXIMO_DETENIDO:
+        # ¡CONGESTIÓN DETECTADA!
+        print(f"!!! CONGESTIÓN DETECTADA en {vehiculo_id} !!! Tiempo detenido: {tiempo_detenido:.2f}s")
         
-        # Verificamos si el tiempo detenido es mayor o igual al máximo permitido
-        if tiempo_detenido >= TIEMPO_MAXIMO_DETENIDO:
-            # ¡CONGESTIÓN DETECTADA!
-            print(f"!!! CONGESTIÓN DETECTADA en {vehiculo_id} !!! Tiempo detenido: {tiempo_detenido:.2f}s")
+        # Publicacion de alerta y limpieza
+        alerta = CongestionAlertaData(
+            id_vehiculo=vehiculo_id,
+            latitud=lat, 
+            longitud=lon, 
+            timestamp_inicio=estado_previo.timestamp_ultimo_movimiento.isoformat(),
+            duracion_segundos=int(tiempo_detenido),
+            motivo="Detenido críticamente por 24 segundos."
+        )
 
-            alerta = CongestionAlertaData(
-                id_vehiculo=vehiculo_id,
-                latitud=lat, 
-                longitud=lon, 
-                timestamp_inicio=estado_previo.timestamp_ultimo_movimiento.isoformat(),
-                duracion_segundos=int(tiempo_detenido)
-            )
-
-            del ESTADOS_VEHICULOS[vehiculo_id] 
-            print(f"[!] Estado de {vehiculo_id} borrado. Nuevo ciclo.")
-            
-            return alerta
+        del ESTADOS_VEHICULOS[vehiculo_id] 
+        print(f"[!] Estado de {vehiculo_id} borrado. Nuevo ciclo.")
+        
+        return alerta
     
-    ESTADOS_VEHICULOS[vehiculo_id].ultimo_semaforo_estado = current_semaforo_estado
-    
+    # Si no se movió y no ha pasado el tiempo crítico, no hacemos nada.
     return None
 
 
@@ -116,6 +97,8 @@ def callback_posiciones(ch, method, properties, body):
         timestamp_str = posicion_data.timestamp
         
         alerta = analizar_posicion(vehiculo_id, lat_float, lon_float, timestamp_str)
+        
+        print(f"ALERTA: {alerta}")
         
         if alerta:
             mensaje_alerta = json.dumps(asdict(alerta))
