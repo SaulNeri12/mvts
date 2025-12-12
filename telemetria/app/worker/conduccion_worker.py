@@ -89,6 +89,13 @@ def vehicle_movement_worker(vehicle_code):
             
             semaforo_data = current_segment_data.get("semaforo") 
         
+            payload = {
+                'code': vehicle.codigo,
+                'latitude': vehicle.posicion['latitude'],
+                'longitude': vehicle.posicion['longitude'],
+                'timestamp': datetime.now().isoformat()
+                }
+        
             can_move = True
             if semaforo_data and semaforo_data.get("codigo"):
                 codigo_semaforo = semaforo_data["codigo"]
@@ -117,7 +124,9 @@ def vehicle_movement_worker(vehicle_code):
                         'timestamp': datetime.now().isoformat()
                     }
                     
-                    publish_message(COLA_POSICIONES_VEHICULOS, json.dumps(payload))
+                    #publish_message(COLA_POSICIONES_VEHICULOS, json.dumps(payload))
+            
+            publish_message(COLA_POSICIONES_VEHICULOS, json.dumps(payload))
                 
         time.sleep(TIME_STEP)
 

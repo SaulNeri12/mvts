@@ -10,8 +10,8 @@ from app.config.rabbitmq import start_consumer, publish_to_exchange
 from app.models.data_models import PosicionVehiculoData, EstadoVehiculoTemp, CongestionAlertaData, ESTADOS_VEHICULOS 
 
 # Colas y Exchanges (del .env)
-COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "posiciones_vehiculos")
-EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "congestiones") 
+COLA_POSICIONES_VEHICULOS = getenv("COLA_POSICIONES_VEHICULOS", "queue.telemetria.vehiculos.posiciones")
+EXCHANGE_CONGESTIONES = getenv("COLA_CONGESTIONES", "exchange.vehiculos.congestiones")
 
 UMBRAL_MOVIMIENTO = 0.000001 
 TIEMPO_MAXIMO_DETENIDO = 24 
@@ -55,6 +55,8 @@ def analizar_posicion(vehiculo_id: str, lat: float, lon: float, timestamp: str) 
    
     tiempo_detenido = (current_time - estado_previo.timestamp_ultimo_movimiento).total_seconds()
     
+    print(f"TIEMPO DETENIDO: {tiempo_detenido}")
+    
     if tiempo_detenido >= TIEMPO_MAXIMO_DETENIDO:
         # ¡CONGESTIÓN DETECTADA!
         print(f"!!! CONGESTIÓN DETECTADA en {vehiculo_id} !!! Tiempo detenido: {tiempo_detenido:.2f}s")
@@ -95,6 +97,8 @@ def callback_posiciones(ch, method, properties, body):
         timestamp_str = posicion_data.timestamp
         
         alerta = analizar_posicion(vehiculo_id, lat_float, lon_float, timestamp_str)
+        
+        print(f"ALERTA: {alerta}")
         
         if alerta:
             mensaje_alerta = json.dumps(asdict(alerta))
