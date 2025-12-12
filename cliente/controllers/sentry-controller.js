@@ -25,6 +25,7 @@ let vehicleMarkers = {};
 (async() => {
     initMap();
     initWebSocket();
+    initManualLights();
     await initlights();
     await initNotifications();
 })();
@@ -54,6 +55,20 @@ function initMap() {
         iconSize: [23, 45],
         popupAnchor: [0, -20],
     });
+}
+
+function initManualLights(){
+    const cachedManualLights = JSON.parse(localStorage.getItem("manualLights"));
+    
+    if(!Array.isArray || 
+        !cachedManualLights || 
+        cachedManualLights.length === 0) return;
+    
+    console.log('llega hasta aca');
+    cachedManualLights.forEach((light)=> {
+        insertManualControllLightRow(light.lightCode, light.section, light.status);
+    });
+    
 }
 
 /**
@@ -248,14 +263,15 @@ function updateLastUpdateCounter(){
     $('#last-update-time').text(time);
 }
 
-function insertManualControllLightRow(lightCode, section){
+function insertManualControllLightRow(lightCode, section, status = 'gray'){
     const $manualLightsTable = $('#manual-lights-table');
     const manualLightRow = `
         <tr id manual-light-row-${lightCode}>
             <td>${section}</td>
             <td>${lightCode}</td>
-            <td><div id="light-state" style="background-color: gray;"></td>
-                <!-- switch light state button -->
+            <td>
+                <div id="light-state" style="background-color: ${status};">
+            </td>
             <td>
                 <button
                     class="primary-button"
@@ -264,7 +280,6 @@ function insertManualControllLightRow(lightCode, section){
                 Cambiar
                 </button>
             </td>
-                <!-- free light button -->
                 <td>
                 <button
                     id="button-free-light-${lightCode}"
@@ -283,11 +298,30 @@ function insertManualControllLightRow(lightCode, section){
     });
 }
 
-function saveManualControllLightRow(lightCode, section){
-    const rowInfo = {lightCode: lightCode, section: section, state: none}
-    
-    localStorage.setItem("manualLights", JSON.stringify(rowInfo));  
+function saveManualControllLightRow(lightCode, section) {
+    const rowInfo = { lightCode, section, state: "gray" };
+    let manualLightsRows = JSON.parse(localStorage.getItem("manualLights"));
+
+    if (!Array.isArray(manualLightsRows)) {
+        manualLightsRows = [];
+    }
+
+    manualLightsRows.push(rowInfo);
+    localStorage.setItem("manualLights", JSON.stringify(manualLightsRows));
+    console.log(localStorage.getItem("manualLights"));
 }
+
+
+function updateManualControllLightRow(lightCode, section){
+    const rowInfo = {lightCode: lightCode, section: section, state: none}
+    const manualLightsRows = JSON.parse(localStorage(manualLights));
+    
+    if (!manualLightsRows) localStorage.setItem("manualLights", JSON.stringify(rowInfo));  
+
+
+    
+}
+
 
 function deleteManualLightInStorage(lightCode, section){
     
