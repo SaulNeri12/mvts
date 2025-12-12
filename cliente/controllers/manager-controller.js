@@ -4,7 +4,6 @@ import ReportsClient from "../client/reports.client.js";
 const reportsClient = new ReportsClient();
 
 // --- Estado Global ---
-// Aquí guardaremos los resultados de la búsqueda para exportarlos después
 let currentReports = [];
 
 // --- Referencias al DOM ---
@@ -66,15 +65,13 @@ async function handleSearch() {
             data = await reportsClient.getCompletedTravels(inicio, fin);
         }
 
-        // Guardamos los datos en la variable global para poder exportarlos
         currentReports = data || [];
-        
         renderTable(currentReports);
 
     } catch (error) {
         console.error(error);
         tableBody.innerHTML = `<tr><td colspan="3" style="color:red;">Error: ${error.message}</td></tr>`;
-        currentReports = []; // Limpiar en caso de error
+        currentReports = []; 
     }
 }
 
@@ -102,7 +99,6 @@ function renderTable(reports) {
         return;
     }
 
-    // Ordenar descendente
     reports.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
     reports.forEach(report => {
@@ -133,7 +129,9 @@ function exportData(format) {
     }
 
     const generationDate = new Date().toISOString().split('T')[0];
-    const fileName = `Reporte_MVTS_${generationDate}`;
+    
+    // CAMBIO: Formato de nombre solicitado (Espacios, mayúscula inicial, resto minúsculas)
+    const fileName = `Reporte mvts ${generationDate}`;
 
     if (format === 'csv') {
         downloadCSV(currentReports, `${fileName}.csv`);
@@ -142,53 +140,54 @@ function exportData(format) {
     }
 }
 
-/**
- * Genera y descarga un archivo CSV
- */
 function downloadCSV(data, filename) {
-    // Encabezados
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Fecha,Hora,Tipo,Mensaje\n";
+    let csvContent = "Fecha,Hora,Tipo,Mensaje\n";
 
     data.forEach(row => {
         const { dateStr, timeStr } = formatDateTime(row.timestamp);
-        // Escapar comillas en el mensaje para evitar romper el CSV
-        const cleanTitle = row.title.replace(/"/g, '""'); 
+        const cleanTitle = row.title ? row.title.replace(/"/g, '""') : ""; 
         
         const csvRow = [
             dateStr,
             timeStr,
             row.type,
-            `"${cleanTitle}"` // Envolver mensaje en comillas
+            `"${cleanTitle}"` 
         ].join(",");
         
         csvContent += csvRow + "\r\n";
     });
 
-    const encodedUri = encodeURI(csvContent);
+    // CAMBIO: Se agrega el BOM (\uFEFF) al inicio para que Excel reconozca los acentos (UTF-8)
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
     link.setAttribute("download", filename);
+    link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
 
-/**
- * Genera y descarga un archivo XLS (falso Excel compatible con HTML Tables)
- */
 function downloadXLS(data, filename) {
+    // CAMBIO: Se agrega estructura HTML completa con meta charset UTF-8 para acentos
     let tableContent = `
-        <table border="1">
-            <thead>
-                <tr>
-                    <th style="background-color:#2c3e50; color:white;">Fecha</th>
-                    <th style="background-color:#2c3e50; color:white;">Hora</th>
-                    <th style="background-color:#2c3e50; color:white;">Tipo</th>
-                    <th style="background-color:#2c3e50; color:white;">Mensaje</th>
-                </tr>
-            </thead>
-            <tbody>
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <meta charset="utf-8" />
+            </head>
+        <body>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th style="background-color:#2c3e50; color:white;">Fecha</th>
+                        <th style="background-color:#2c3e50; color:white;">Hora</th>
+                        <th style="background-color:#2c3e50; color:white;">Tipo</th>
+                        <th style="background-color:#2c3e50; color:white;">Mensaje</th>
+                    </tr>
+                </thead>
+                <tbody>
     `;
 
     data.forEach(row => {
@@ -203,9 +202,8 @@ function downloadXLS(data, filename) {
         `;
     });
 
-    tableContent += `</tbody></table>`;
+    tableContent += `</tbody></table></body></html>`;
 
-    // Crear Blob con tipo Excel
     const blob = new Blob([tableContent], { type: 'application/vnd.ms-excel' });
     const url = window.URL.createObjectURL(blob);
     
@@ -217,7 +215,6 @@ function downloadXLS(data, filename) {
     document.body.removeChild(link);
 }
 
-// Helper para fechas
 function formatDateTime(isoString) {
     const dateObj = new Date(isoString);
     return {
