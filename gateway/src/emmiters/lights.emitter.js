@@ -13,3 +13,26 @@ exports.lightsUpdate = (lightData) => {
         console.log('Error emitting lights update:', error);
     }
 }
+
+exports.emitLightTaken = async(lightData) =>
+{
+    try{
+        const io = getIO();
+        io.emit('light_taken_update', lightData);
+    }
+    catch (error){
+        console.log('Error emitting light taken update:', error);
+    }
+} 
+
+
+exports.emitLightFreed = async(lightData) =>
+{
+    try{
+        const io = getIO();
+        await io.emit('light_freed_update', lightData);
+    }
+    catch (error){
+        console.log('Error emitting light freed update:', error);
+    }
+} 

@@ -30,6 +30,12 @@ class TooManySessionsError extends AppError {
   }
 }
 
+class GatewayError extends AppError {
+  constructor(message = 'Error al obtener el recurso') {
+    super(message, 502);
+  }
+}
+
 class InternalError extends AppError {
   constructor(message = 'Error en el servidor') {
     super(message, 500);
@@ -50,6 +56,7 @@ module.exports = {
   UnauthorizedError,
   RepositoryError,
   TooManySessionsError,
+  GatewayError,
   InternalError,
   ConflictError
 };

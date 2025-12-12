@@ -1,5 +1,9 @@
 const lightsEmitter = require('../emmiters/lights.emitter');
 const lightsClient = require('../infrestructure/client/lights.client');
+const takeManualLightService = require('../services/takeManualLightControll.service');
+const getAllLightsService = require('../services/getAllLightsService');
+const changeLightStateService = require('../services/changeLightState.service');
+const freeManualLightControllService = require('../services/freeManualLightControll.service');
 
 
 /**
@@ -24,8 +28,9 @@ exports.handleLightsMessage = async (message) => {
  */
 exports.handleTakeManualControl = async (req, res, next) => {
     try{
-        const {user_id, light_id} = req.body;
-        await lightsClient.takeManualControl(user_id, light_id);
+        const {user_id, light_code} = req.body;
+        await takeManualLightService.takeLightManual(user_id, light_code);
+        res.status(200).json({ message: "Light successfully taken" });
     } catch (error) {
         next(error);
     }
@@ -39,10 +44,11 @@ exports.handleTakeManualControl = async (req, res, next) => {
  */
 exports.handleLightStateChange = async (req, res, next) => {
     try{
-        const { light_id, new_state } = req.body;
-        await lightsClient.changeLightState(light_id, new_state);
+        const { user_id, light_code, new_state } = req.body;
+        await changeLightStateService.changeLightState(user_id, light_code, new_state);
+        res.status(200).json();
     } catch (error) {
-        console.log('Error changing light state:', error);
+        next(error);
     }
 }
 
@@ -54,7 +60,7 @@ exports.handleLightStateChange = async (req, res, next) => {
  */
 exports.handleGetAllLights = async (req, res, next) => {
     try{
-        const lights = await lightsClient.getAllLights();
+        const lights = await getAllLightsService.getAllLights();
         return res.status(200).json(lights);
     } catch (error) {
         next(error);
@@ -69,9 +75,10 @@ exports.handleGetAllLights = async (req, res, next) => {
  */
 exports.handleReleaseManualControl = async (req, res, next) => {
     try{
-        const { light_id } = req.body;
-        await lightsClient.releaseManualControl(light_id);
-    } catch (error) {
+        const { user_id, light_code } = req.query;
+        await freeManualLightControllService.releaseManualControl(user_id, light_code);
+        res.status(200).json();
+    } catch (error) {   
         next(error);
     }
 }

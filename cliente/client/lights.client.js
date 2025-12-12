@@ -24,4 +24,52 @@ export default class  LightsClient {
       throw new Error(errorMessage || 'Error al intentar obtener los semaforos');
     }
   }
+
+  async takeManualLightControll(userId, lightCode)
+  {
+    try{
+        await this.api.post('/api/v1/lights/manual/control', 
+          {
+            user_id: userId,
+            light_code: lightCode
+          });
+    }
+    catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al intentar tomar el control manual');
+    }
+  }
+
+  async changeLightState(userId, lightCode, newState)
+  {
+    try{
+        await this.api.post('/api/v1/lights/change/state', 
+          {
+            user_id: userId,
+            light_code: lightCode,
+            new_state: newState
+          });
+    }
+    catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al intentar tomar el control manual');
+    }
+  }
+
+  async freeLightManualControll(userId, lightCode)
+  {
+    try{
+        await this.api.delete('/api/v1/lights/manual/control', {
+          data: {
+            user_id: userId,
+            light_code: lightCode,
+          }
+        });
+    }
+    catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al intentar liberar el semaforo');
+    }
+  }
+  
 }
