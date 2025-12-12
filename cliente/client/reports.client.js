@@ -25,4 +25,36 @@ export default class  ReportsClient {
     }
   }
 
+/**
+   * Obtiene las congestiones en un rango de fechas.
+   * Endpoint: /api/v1/alerts/congestion?startDate=Y-M-D&endDate=Y-M-D
+   */  
+  async getCongestions(startDate, endDate) {
+    try {
+        const response = await this.api.get('/api/v1/alerts/congestion', {
+            params: { startDate, endDate }
+        });
+        // El backend devuelve { status: 'success', data: [...] }
+        return response.data.data; 
+    } catch(error) {
+        console.error("Error fetching congestions:", error);
+        throw new Error(error.response?.data?.error || 'Error al obtener reporte de congestiones');
+    }
+  }
+
+  /**
+   * Obtiene los viajes completados (entregas) en un rango de fechas.
+   * Endpoint: /api/v1/alerts/viajes?startDate=Y-M-D&endDate=Y-M-D
+   */
+  async getCompletedTravels(startDate, endDate) {
+    try {
+        const response = await this.api.get('/api/v1/alerts/viajes', {
+            params: { startDate, endDate }
+        });
+        return response.data.data;
+    } catch(error) {
+        console.error("Error fetching travels:", error);
+        throw new Error(error.response?.data?.error || 'Error al obtener reporte de viajes');
+    }
+  }
 }
