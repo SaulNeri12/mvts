@@ -1,9 +1,12 @@
 import LightsClient from "../client/lights.client.js";
 import NotificationClient from "../client/notification.client.js";
+import UserClient from "../client/user.client.js";
 
+let userClient = new UserClient();
 const lightsClient = new LightsClient();
 const notificationClient = new NotificationClient();
 const user = JSON.parse(sessionStorage.getItem('userInfo'));
+const refreshToken = sessionStorage.getItem('refreshToken');
 
 //declarations for the dialog and the button
 let btnLogout = document.getElementById('logout-button'); 
@@ -19,7 +22,6 @@ let dialogNotificationsFilter = document.getElementById('notification-filter-dia
 let map;
 let lightsIcon;
 let vehicleIcon;
-let currentLightState;
 let lightsMarkers = {};
 let vehicleMarkers = {};
 
@@ -344,7 +346,8 @@ function handleTravelCompletedUpdate(notification) {
 function handleUserLogout(){
     try{
         // Call the rest api to log out
-        
+        console.log(user.id, refreshToken);
+        userClient.singleLogout(user.id, refreshToken);
 
         // redirect the user to the log in
         window.location.replace('Index.html');

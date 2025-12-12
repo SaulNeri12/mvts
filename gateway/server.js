@@ -2,7 +2,6 @@ require('dotenv').config();
 const http = require('http');
 const cors = require('cors');
 const express = require('express');
-const socketio = require('socket.io');
 const seedUsers = require('./src/utils/users.seeder');
 const connectDB = require('./src/config/mongo.config');
 const seedSessions = require('./src/utils/session.seeder');
@@ -77,6 +76,7 @@ function setUpPrivateRoutes(){
   app.use('/user', userPrivateRouter);
   app.use('/api/v1/lights', lightPrivateRouter);
   app.use('/api/v1/alerts', alertsPrivateRouter);
+  app.use('/api/v1/sessions', userPrivateRouter);
 }
 
 function setUpInternallMiddlewares(){

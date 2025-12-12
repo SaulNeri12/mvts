@@ -66,7 +66,7 @@ export default class  UserClient {
   async singleLogout(userId, refreshToken)
   {
     try{
-        return await this.api.delete('/single_logout/', {
+        return await this.api.delete('/api/v1/sessions/logout', {
           data: { 
             user_id: userId,
             refresh_token: refreshToken

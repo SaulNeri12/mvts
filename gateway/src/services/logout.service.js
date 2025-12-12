@@ -16,6 +16,7 @@ const { RepositoryError,
 exports.singleLogout = async (userId, refreshToken) => 
 {
     try{
+        console.log(userId, refreshToken);
         const lightsToFreed = getLightToFree(userId)
         freeAllUserLightsInRepository(userId);
         await freeAllLightsInLightsService();

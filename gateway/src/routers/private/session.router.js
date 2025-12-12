@@ -7,6 +7,6 @@ const sessionController = require('../../controllers/session.controller');
 router.use(rateLimiter.private())
 
 // protected session routes
-router.delete('/api/v1/logout', authenticateToken, sessionController.handleLogout); // Route to handle user logout-
+router.delete('/logout', authenticateToken, sessionController.handleLogout); // Route to handle user logout-
 
 module.exports = router;
