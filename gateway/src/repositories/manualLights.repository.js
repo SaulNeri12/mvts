@@ -51,16 +51,16 @@ exports.validateIfAlreadyTaken = (lightCode) => {
  *
  * @param {string} lightCode - Light identifier code.
  */
-exports.validateIfTakenByUser = (userId, light) => {
+exports.validateIfTakenByUser = (userId, lightCode) => {
     const userLights = manualLights[userId];
     if (!Array.isArray(userLights) || userLights.length === 0) return false;
-    return userLights.some(l => l && l.code === light.code);
+    return userLights.some(l => l && l.code === lightCode);
 };
 
-exports.validateIfTaken = (light) => {
+exports.validateIfTaken = (lightCode) => {
     for (const lights of Object.values(manualLights)) {
         if (!Array.isArray(lights)) continue;
-        if (lights.some(l => l && l.code === light.code)) return true;
+        if (lights.some(l => l && l.code === lightCode)) return true;
     }
     return false;
 };
@@ -86,6 +86,20 @@ exports.getLightsByUserId = (userId) =>
     const userLights = manualLights[userId];
     if(!userLights || userLights.length === 0) return [];
     return userLights;
+}
+
+exports.updateLightState = (userId, lightCode, newStatus) =>
+{
+    const userLights = manualLights[userId];
+    if(!userLights || userLights.length === 0) {
+        throw new RepositoryError('El usuario no cuenta con semaforos a actualizar');
+    }
+    
+    userLights.forEach(light => {
+        if(light.code === lightCode){
+            light.status = newStatus;
+        }
+    });
 }
 
 
