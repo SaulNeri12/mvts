@@ -8,7 +8,7 @@ exports.takeLightManual = async (userId, light) =>
         manualLightsRepository.validateIfAlreadyTaken(light.code);
         manualLightsRepository.validateMaximumInControll(userId);
         manualLightsRepository.addManualControll(userId, light);
-        lightsEmitter.emitLightTaken({userId, light});
+        lightsEmitter.emitLightTaken({ lightCode: light.code });
     }
     catch(error){
         throw error

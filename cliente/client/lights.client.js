@@ -25,7 +25,7 @@ export default class  LightsClient {
     }
   }
 
-  async getAllManualLights(userId){
+  async getManualLights(userId){
     try{
         const lights =  await this.api.get(`/api/v1/lights/${userId}/manual/lights`);
         return lights.data;
@@ -36,13 +36,17 @@ export default class  LightsClient {
     }
   }
 
-  async takeManualLightControll(userId, lightCode)
+  async takeManualLightControll(userId, lightCode, section, status)
   {
     try{
         await this.api.post('/api/v1/lights/manual/control', 
           {
             user_id: userId,
-            light_code: lightCode
+            light: {
+              code: lightCode,
+              section: section,
+              status: status
+            }
           });
     }
     catch(error){
@@ -67,20 +71,19 @@ export default class  LightsClient {
     }
   }
 
-  async freeLightManualControll(userId, lightCode)
-  {
-    try{
-        await this.api.delete('/api/v1/lights/manual/control', {
+    async freeLightManualControll(userId, lightCode) 
+    {
+      try {
+        await this.api.delete('/api/v1/lights/user/manual/light/control', {
           data: {
             user_id: userId,
             light_code: lightCode,
           }
         });
+      } catch (error) {
+        const errorMessage = error.response?.data;
+        throw new Error(errorMessage || 'Error al intentar liberar el semáforo');
+      }
     }
-    catch(error){
-      const errorMessage = error.response?.data;
-      throw new Error(errorMessage || 'Error al intentar liberar el semaforo');
-    }
-  }
   
 }

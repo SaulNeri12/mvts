@@ -57,18 +57,17 @@ function initMap() {
     });
 }
 
-function initManualLights(){
-    const cachedManualLights = JSON.parse(localStorage.getItem("manualLights"));
-    
-    if(!Array.isArray || 
-        !cachedManualLights || 
-        cachedManualLights.length === 0) return;
-    
-    console.log('llega hasta aca');
-    cachedManualLights.forEach((light)=> {
-        insertManualControllLightRow(light.lightCode, light.section, light.status);
-    });
-    
+async function initManualLights(){
+    try{
+        const userManualLights = await lightsClient.getManualLights(user.id);
+        if(!userManualLights || userManualLights.length === 0) return;
+        
+        userManualLights.forEach((light)=> {
+            insertManualControllLightRow(light.code, light.section, light.status);
+        });
+    }catch(error){
+
+    }
 }
 
 /**
@@ -134,9 +133,15 @@ function addLightsToTable(lights) {
 
         $lightsTable.append(row);
 
-        $(`#light-${light.code}`).find(`#take-controll-${light.code}`).click( async ()=>{
+        $(`#light-${light.code}`).find(`#take-controll-${light.code}`).click( async (event)=>{
+            event.preventDefault();
             await handleTakeLightControll(light.code, light.section);
         });
+
+        if(light.taken){
+            $(`#take-controll-${light.code}`).addClass('disabled');
+            $(`#take-controll-${light.code}`).prop('disabled', true);
+        }
     });
 }
 
@@ -263,10 +268,10 @@ function updateLastUpdateCounter(){
     $('#last-update-time').text(time);
 }
 
-function insertManualControllLightRow(lightCode, section, status = 'gray'){
+function insertManualControllLightRow(lightCode, section){
     const $manualLightsTable = $('#manual-lights-table');
     const manualLightRow = `
-        <tr id manual-light-row-${lightCode}>
+        <tr id="manual-light-row-${lightCode}">
             <td>${section}</td>
             <td>${lightCode}</td>
             <td>
@@ -282,7 +287,7 @@ function insertManualControllLightRow(lightCode, section, status = 'gray'){
             </td>
                 <td>
                 <button
-                    id="button-free-light-${lightCode}"
+                    id="free-light-${lightCode}"
                     class="secondary-button-icon"
                     title="Liberar control manual del semaforo"
                 >
@@ -293,43 +298,11 @@ function insertManualControllLightRow(lightCode, section, status = 'gray'){
     `
     $manualLightsTable.append(manualLightRow);
 
-    $(`#manual-light-row-${lightCode}`).find(`#button-free-light-${lightCode}`).click( async ()=>{
-        console.log('si me aplastaron');
+    $(`#manual-light-row-${lightCode}`).find(`#free-light-${lightCode}`).click( async ()=>{
+        await handleFreeManualControll(lightCode);
     });
 }
 
-function saveManualControllLightRow(lightCode, section) {
-    const rowInfo = { lightCode, section, state: "gray" };
-    let manualLightsRows = JSON.parse(localStorage.getItem("manualLights"));
-
-    if (!Array.isArray(manualLightsRows)) {
-        manualLightsRows = [];
-    }
-
-    manualLightsRows.push(rowInfo);
-    localStorage.setItem("manualLights", JSON.stringify(manualLightsRows));
-    console.log(localStorage.getItem("manualLights"));
-}
-
-
-function updateManualControllLightRow(lightCode, section){
-    const rowInfo = {lightCode: lightCode, section: section, state: none}
-    const manualLightsRows = JSON.parse(localStorage(manualLights));
-    
-    if (!manualLightsRows) localStorage.setItem("manualLights", JSON.stringify(rowInfo));  
-
-
-    
-}
-
-
-function deleteManualLightInStorage(lightCode, section){
-    
-}
-
-function deleteAllManualLightsInStorage(lightCode, section){
-    
-}
 
 // -- HANDLERS -- 
 
@@ -377,11 +350,19 @@ function handlelightFreedUpdate(lightFreed){
     $(`#take-controll-${lightCode}`).prop('disabled', false);
 }
 
-async function handleTakeLightControll(lightCode, section) {
+async function handleTakeLightControll(lightCode, section, status = "gray") {
     try{
-        await lightsClient.takeManualLightControll(user.id, lightCode);
+        await lightsClient.takeManualLightControll(user.id, lightCode, section, status);
         insertManualControllLightRow(lightCode, section);
-        saveManualControllLightRow(lightCode, section);
+    }
+    catch(error){
+        showErrorNotification({text: error.message})
+    }
+}
+
+async function handleFreeManualControll(lightCode) {
+    try{
+        await lightsClient.freeLightManualControll(user.id, lightCode);
     }
     catch(error){
         showErrorNotification({text: error.message})

@@ -75,7 +75,8 @@ exports.handleGetAllLights = async (req, res, next) => {
  */
 exports.handleReleaseManualControl = async (req, res, next) => {
     try{
-        const { user_id, light_code } = req.query;
+        const { user_id, light_code } = req.body;
+        console.log(user_id, light_code);
         await freeManualLightControllService.releaseManualControl(user_id, light_code);
         res.status(200).json();
     } catch (error) {   

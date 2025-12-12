@@ -111,8 +111,9 @@ exports.updateLightState = (userId, lightCode, newStatus) =>
  * @returns {boolean} True if the assignment was removed, false if it did not exist.
  */
 exports.freeManualControll = (userId, lightCode) => {
+    console.log(manualLights);
     const userLights = manualLights[userId];
-    if (!Array.isArray(userLights) || userLights.length === 0) {
+    if (userLights.length === 0) {
         throw new NotFoundError('El usuario brindado no cuenta con semaforos a liberar');
     }
 
