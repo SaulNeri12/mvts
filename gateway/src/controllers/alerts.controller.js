@@ -36,3 +36,12 @@ exports.handleGetAlertsForToday = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.handleGetAllAlerts = async (req, res, next) => {
+    try{
+        const alerts = await alertsClient.getAlertsAll();
+        return res.status(200).json(alerts);
+    } catch (error) {
+        next(error);
+    }
+}

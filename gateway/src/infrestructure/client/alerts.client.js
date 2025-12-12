@@ -44,6 +44,16 @@ class AlertsClient {
       throw new Error(errorMessage || 'Error al obtener las alertas');
     }
   }
+
+  async getAlertsAll() {
+    try {
+      const response = await this.api.get("/api/v1/alerts/all");
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al obtener las alertas');
+    }
+  }
 }
 
 module.exports = new AlertsClient();
