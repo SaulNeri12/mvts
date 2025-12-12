@@ -25,6 +25,17 @@ export default class  LightsClient {
     }
   }
 
+  async getAllManualLights(userId){
+    try{
+        const lights =  await this.api.get(`/api/v1/lights/${userId}/manual/lights`);
+        return lights.data;
+    }
+    catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al intentar obtener los semaforos');
+    }
+  }
+
   async takeManualLightControll(userId, lightCode)
   {
     try{
