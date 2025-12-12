@@ -45,3 +45,39 @@ exports.handleGetAllAlerts = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.handleGetViajesByDateRange = async (req, res, next) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ 
+            error: "Faltan los parámetros 'startDate' y 'endDate' en la consulta." 
+        });
+    }
+
+    try {
+        const alerts = await alertsClient.getViajesCompletadosByDataRange(startDate, endDate);
+        return res.status(200).json(alerts);
+    } catch (error) {
+        console.error(`Error al obtener alertas de viajes completados por rango: ${error.message}`);
+        next(error); 
+    }
+}
+
+exports.handleGetCongestionByDateRange = async (req, res, next) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ 
+            error: "Faltan los parámetros 'startDate' y 'endDate' en la consulta." 
+        });
+    }
+
+    try {
+        const alerts = await alertsClient.getCongestionByDateRange(startDate, endDate);
+        return res.status(200).json(alerts);
+    } catch (error) {
+        console.error(`Error al obtener alertas de congestión por rango: ${error.message}`);
+        next(error);
+    }
+}
