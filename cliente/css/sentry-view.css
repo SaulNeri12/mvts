@@ -153,6 +153,14 @@ body{
   margin: auto;
 }
 
+.manual-light-state {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--red-light-color); /* Default color */
+  margin: auto;
+}
+
 
 /*Styles for the logout dialog*/
 dialog {
