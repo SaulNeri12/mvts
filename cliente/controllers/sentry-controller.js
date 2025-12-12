@@ -17,8 +17,9 @@ let dialogLightsFilter = document.getElementById('lights-filter-dialog');
 let dialogNotificationsFilter = document.getElementById('notification-filter-dialog');
 
 let map;
-let vehicleIcon;
 let lightsIcon;
+let vehicleIcon;
+let currentLightState;
 let lightsMarkers = {};
 let vehicleMarkers = {};
 
@@ -268,17 +269,22 @@ function updateLastUpdateCounter(){
     $('#last-update-time').text(time);
 }
 
-function insertManualControllLightRow(lightCode, section){
+function insertManualControllLightRow(lightCode, section, state = "gray"){
     const $manualLightsTable = $('#manual-lights-table');
     const manualLightRow = `
         <tr id="manual-light-row-${lightCode}">
             <td>${section}</td>
             <td>${lightCode}</td>
             <td>
-                <div id="light-state" style="background-color: ${status};">
+                <div id="manual-light-state-${lightCode}"
+                    style="background-color: ${state};"
+                    class="manual-light-state"
+                    data-state="${state}">
+                </div>
             </td>
             <td>
                 <button
+                    id="change-light-${lightCode}"
                     class="primary-button"
                     title="Cambiar estado del semaforo"
                 >
@@ -297,6 +303,10 @@ function insertManualControllLightRow(lightCode, section){
         </tr>
     `
     $manualLightsTable.append(manualLightRow);
+
+    $(`#manual-light-row-${lightCode}`).find(`#change-light-${lightCode}`).click( async ()=>{
+        await handleChangeLightState(lightCode, state);
+    });
 
     $(`#manual-light-row-${lightCode}`).find(`#free-light-${lightCode}`).click( async ()=>{
         await handleFreeManualControll(lightCode);
@@ -350,9 +360,9 @@ function handlelightFreedUpdate(lightFreed){
     $(`#take-controll-${lightCode}`).prop('disabled', false);
 }
 
-async function handleTakeLightControll(lightCode, section, status = "gray") {
+async function handleTakeLightControll(lightCode, section, state = "gray") {
     try{
-        await lightsClient.takeManualLightControll(user.id, lightCode, section, status);
+        await lightsClient.takeManualLightControll(user.id, lightCode, section, state);
         insertManualControllLightRow(lightCode, section);
     }
     catch(error){
@@ -361,15 +371,52 @@ async function handleTakeLightControll(lightCode, section, status = "gray") {
 }
 
 async function handleFreeManualControll(lightCode) {
-    try{
+    try {
         await lightsClient.freeLightManualControll(user.id, lightCode);
+        $(`#manual-light-row-${lightCode}`).remove();
     }
     catch(error){
-        showErrorNotification({text: error.message})
+        showErrorNotification({ text: error.message });
     }
 }
 
+async function handleChangeLightState(lightCode) {
+    const states = {
+        "gray": "verde",
+        "verde": "amarillo",
+        "amarillo": "rojo",
+        "rojo": "verde"
+    };
 
+    const colors = {
+        "rojo": "#fa3d3dff",
+        "amarillo": "#c4b703ff",
+        "verde": "#089e08"
+    }
+    
+    //get the current state
+    const $lightState = $(`#manual-light-state-${lightCode}`);
+    const state = $lightState.data('state');
+
+    //assing new state
+    const newState = states[state];
+    $lightState.data('state', newState);
+    
+    try{
+        $(`#change-light-${lightCode}`).prop('disabled', true);
+
+        await lightsClient.changeLightState(user.id, lightCode, newState)
+
+        //assing the new color
+        $lightState.css('background-color', colors[newState]);
+
+        setTimeout(()=>{
+            $(`#change-light-${lightCode}`).prop('disabled', false);
+        }, 1000)
+    }catch(error){
+        showErrorNotification({ text: error.message });
+    }
+}
 
 // --- NOTIFICATIONS ---
 function showNotification(opt = {}){
