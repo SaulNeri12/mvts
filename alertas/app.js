@@ -33,6 +33,7 @@ async function initializeConsumers() {
 
 async function initializePublishers() {
     await alertViajesCompletadosPublisher.initialize();
+    await alertCongestionesPublisher.initialize();
 }
 
 (async () => {

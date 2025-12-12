@@ -182,7 +182,7 @@ services:
       - TTL_INTERVAL=10
       #esto se agrego nuevo
       - COLA_POSICIONES_VEHICULOS=queue.telemetria.vehiculos.posiciones 
-      - COLA_CONGESTIONES=exchange.congestiones
+      - COLA_CONGESTIONES=exchange.vehiculos.congestiones
       - EXCHANGES_SEMAFOROS_ESTADO=exchange.semaforos.estado
       - COLA_SEMAFOROS_CONGESTIONES=queue.congestiones.semaforos
     ports:

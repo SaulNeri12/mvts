@@ -1,34 +1,26 @@
 import time
 import json
 from datetime import datetime
-from rabbit_publisher import publish_message, COLA_POSICIONES, EXCHANGE_SEMAFOROS
+from rabbit_publisher import publish_message, COLA_POSICIONES
 
-# --- DATOS DEL ESCENARIO DE PRUEBAAAA ---
-VEHICULO_ID = "VH-01"
+# --- DATOS DEL ESCENARIO DE PRUEBA ---
+# ¡USAMOS UN CÓDIGO DE VEHÍCULO QUE NO ESTÁ EN MOVIMIENTO!
+VEHICULO_ID = "TEST-01" 
 
-# coordenadas estaticas de semaforo S1 (para la logica de congestiones)
-LAT_SEMAFORO_S1 = "30.97278024833265"
-LON_SEMAFORO_S1 = "-110.3504071944602"
-SEMAFORO_ID_S1 = "247498" 
+# Coordenadas estáticas (Coordenadas ficticias lejanas para evitar conflicto)
+LAT_PRUEBA = "20.00000000000000"
+LON_PRUEBA = "-100.0000000000000"
 
-# el servicio de congestiones espera una detencion de 9 segundos
-TIEMPO_DETENIDO_NECESARIO = 11 
+# La nueva regla es 24 segundos. Usaremos 25s para garantizar la detección.
+TIEMPO_DETENIDO_NECESARIO = 25 
+REPORTE_INTERVALO = 5 
 
 # --- MENSAJES SIMULADOS ---
-
-def enviar_estado_semaforo(sem_id, estado):
-    """Envía el mensaje de cambio de estado de semáforo."""
-    mensaje = {
-        "id": sem_id,
-        "estado": estado,
-        "ts": int(time.time() * 1000)
-    }
-    publish_message(EXCHANGE_SEMAFOROS, "", mensaje)
 
 def enviar_posicion_vehiculo(lat, lon):
     """Envía un mensaje de posición de vehículo."""
     mensaje = {
-        "code": VEHICULO_ID,
+        "code": VEHICULO_ID, # <-- Usamos TEST-01
         "latitude": str(lat),
         "longitude": str(lon),
         "timestamp": datetime.now().isoformat()
@@ -39,44 +31,31 @@ def enviar_posicion_vehiculo(lat, lon):
 
 def simular_congestion():
     
-    # PAUSA INICIAL: Esperamos 5 segundos para asegurarnos que Telemetría ha iniciado
-    print("\n[PAUSA] Esperando 5 segundos para que los servicios se estabilicen...")
-    time.sleep(5)
-    
     print("\n" + "="*50)
-    print(f"| INICIANDO SIMULACIÓN DE CONGESTIÓN para {VEHICULO_ID} |")
+    print(f"| INICIANDO SIMULACIÓN DE CONGESTIÓN CRÍTICA para {VEHICULO_ID} |")
+    print(f"| Condición: Detenido por > {TIEMPO_DETENIDO_NECESARIO}s |")
     print("="*50 + "\n")
 
-    print("--- 1. INICIO: Inicializando estado del vehículo y semáforo (ROJO) ---")
-    enviar_estado_semaforo(SEMAFORO_ID_S1, "rojo")
-    enviar_posicion_vehiculo(LAT_SEMAFORO_S1, LON_SEMAFORO_S1) # Posición A
+    # 1. Movimiento inicial (para inicializar el estado del vehículo)
+    print(f"--- 1. INICIO: Inicializando estado del vehículo en {LAT_PRUEBA} ---")
+    enviar_posicion_vehiculo(LAT_PRUEBA, LON_PRUEBA) # Posición A
 
-    time.sleep(2) 
-
-    # 2. el semaforo cambia a VERDE
-    print("\n--- 2. EVENTO CLAVE: Semáforo S1 cambia a VERDE ---")
-    enviar_estado_semaforo(SEMAFORO_ID_S1, "verde")
-
-    # 3. el vehiculo reporta su posicion, pero NO SE MUEVE (Detención Inesperada)
-    print("--- 3. DETENCIÓN: Vehículo VH-01 reporta primera posición estática ---")
-    enviar_posicion_vehiculo(LAT_SEMAFORO_S1, LON_SEMAFORO_S1) 
-    
-    # 4. esperamos el tiempo de umbral (TIEMPO_DETENIDO_NECESARIO)
+    # 2. Esperamos el tiempo de umbral (TIEMPO_DETENIDO_NECESARIO)
     tiempo_espera = TIEMPO_DETENIDO_NECESARIO
-    print(f"\n--- 4. ESPERANDO {tiempo_espera}s... (El vehículo NO se mueve, a pesar del VERDE) ---")
+    print(f"\n--- 2. ESPERANDO {tiempo_espera}s... (El vehículo NO se mueve) ---")
     
-    for _ in range(int(tiempo_espera / 2)): 
-         time.sleep(2)
-         enviar_posicion_vehiculo(LAT_SEMAFORO_S1, LON_SEMAFORO_S1) # Sigue en Posición A
+    num_reportes = int(tiempo_espera / REPORTE_INTERVALO)
+    for _ in range(num_reportes): 
+         time.sleep(REPORTE_INTERVALO)
+         enviar_posicion_vehiculo(LAT_PRUEBA, LON_PRUEBA) # Sigue en Posición A
          
-    # 5. Reporte final que DEBE activar la congestion
-    print("\n--- 5. VERIFICACIÓN: Enviando posición para activar la alerta ---")
-    enviar_posicion_vehiculo(LAT_SEMAFORO_S1, LON_SEMAFORO_S1) 
+    # 3. Reporte final que DEBE activar la congestión
+    print("\n--- 3. VERIFICACIÓN: Enviando posición para activar la alerta ---")
+    time.sleep(REPORTE_INTERVALO / 2)
+    enviar_posicion_vehiculo(LAT_PRUEBA, LON_PRUEBA) # Sigue en Posición A
     
     print("\n--- ¡SIMULACIÓN TERMINADA! ---")
     
 if __name__ == "__main__":
     import json
     simular_congestion()
-
-    #PARA EJECUTAR LA PRUEBA: docker run --rm -v "$(Get-Location)/pruebas:/pruebas" --network mvts_mvts_network -e "RABBITMQ_HOST=rabbitmq" -e "RABBITMQ_PORT=5672" python:3.11-slim sh -c "pip install pika && python /pruebas/simulador_prueba.py"
