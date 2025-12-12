@@ -1,11 +1,11 @@
 const crypto = require('crypto');
-const lightsEmitter = require('../emmiters/lights.emitter')
+const lightsEmitter = require('../emmiters/lights.emitter');
+const lightsClient = require('../infrestructure/client/lights.client');
 const sessionRepository = require('../repositories/session.repository');
 const manualLightsRepository = require('../repositories/manualLights.repository');
-const {ValidationError, 
-      RepositoryError,  
-      NotFoundError,
-      InternalError
+const { RepositoryError,  
+        NotFoundError,
+        InternalError
     } = require('../errors/errors');
 
 /**
@@ -17,7 +17,8 @@ exports.singleLogout = async (userId, refreshToken) =>
 {
     try{
         const lightsToFreed = getLightToFree(userId)
-        freeAllLights(userId);
+        freeAllUserLightsInRepository(userId);
+        await freeAllLightsInLightsService();
         await emmitAllLightsFreed(lightsToFreed);
         await closeSession(userId, refreshToken);
     }
@@ -30,12 +31,20 @@ function getLightToFree(userId){
     return manualLightsRepository.getLightsByUserId(userId);
 }
 
-function freeAllLights(userId) {
+function freeAllUserLightsInRepository(userId) {
     try{
         manualLightsRepository.freeAllLights(userId);
     }catch(error){
         
     }
+}
+
+async function freeAllLightsInLightsService(lightsToFreed){
+    lightsToFreed.forEach((light) => {
+        setTimeout(()=> {
+            lightsClient.changeLightState(light.code, "");
+        }, 500);
+    })
 }
 
 async function emmitAllLightsFreed(userId, lightCodes) {
