@@ -36,7 +36,7 @@ export default class  LightsClient {
     }
   }
 
-  async takeManualLightControll(userId, lightCode, section, status)
+  async takeManualLightControll(userId, lightCode, section, state)
   {
     try{
         await this.api.post('/api/v1/lights/manual/control', 
@@ -45,7 +45,7 @@ export default class  LightsClient {
             light: {
               code: lightCode,
               section: section,
-              status: status
+              status: state
             }
           });
     }
