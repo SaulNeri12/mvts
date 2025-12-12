@@ -81,9 +81,9 @@ async function handleLogin() {
     console.log("User logged in:", user);
 
     // Store tokens in localStorage
-    localStorage.setItem("accessToken", user.tokens.access);
-    localStorage.setItem("refreshToken", user.tokens.refresh);
-    localStorage.setItem("userInfo", user.user);
+    sessionStorage.setItem("accessToken", JSON.stringify(user.tokens.access));
+    sessionStorage.setItem("refreshToken", JSON.stringify(user.tokens.refresh));
+    sessionStorage.setItem("userInfo", JSON.stringify(user.user));
 
     redirectToMainPage(user.user.rol);
 

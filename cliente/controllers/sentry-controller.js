@@ -3,6 +3,7 @@ import NotificationClient from "../client/notification.client.js";
 
 const lightsClient = new LightsClient();
 const notificationClient = new NotificationClient();
+const user = JSON.parse(sessionStorage.getItem('userInfo'));
 
 //declarations for the dialog and the button
 let btnLogout = document.getElementById('logout-button'); 
@@ -18,8 +19,8 @@ let dialogNotificationsFilter = document.getElementById('notification-filter-dia
 let map;
 let vehicleIcon;
 let lightsIcon;
-let vehicleMarkers = {};
 let lightsMarkers = {};
+let vehicleMarkers = {};
 
 (async() => {
     initMap();
@@ -72,6 +73,15 @@ function initWebSocket(){
     socket.on('lights_update', (message)=> {
         handlelightsUpdate(message);
     });
+
+    socket.on('light_taken_update', (message)=> {
+        handlelightTakenUpdate(message);
+    });
+
+    socket.on('light_freed_update', (message)=> {
+        handlelightFreedUpdate(message);
+    });
+
 }
 
 async function initlights(){
@@ -90,6 +100,7 @@ function addLightsToTable(lights) {
 
     const $lightsTable = $('#lights-table');
     lights.forEach(light => {
+        const disabled = (light.taken == true) ? "disabled" : "";
         const row = 
         `<tr id="light-${light.code}">
             <td>${light.section}</td>
@@ -100,13 +111,17 @@ function addLightsToTable(lights) {
                 </div>
             </td>
             <td>
-                <button class="primary-button" title="Tomar control manual">
+                <button id="take-controll-${light.code}" class="primary-button ${disabled}" title="Tomar control manual">
                     Tomar control
                 </button>
             </td>
         </tr>`;
 
         $lightsTable.append(row);
+
+        $(`#light-${light.code}`).find(`#take-controll-${light.code}`).click( async ()=>{
+            await handleTakeLightControll(light.code, light.section);
+        });
     });
 }
 
@@ -233,6 +248,55 @@ function updateLastUpdateCounter(){
     $('#last-update-time').text(time);
 }
 
+function insertManualControllLightRow(lightCode, section){
+    const $manualLightsTable = $('#manual-lights-table');
+    const manualLightRow = `
+        <tr id manual-light-row-${lightCode}>
+            <td>${section}</td>
+            <td>${lightCode}</td>
+            <td><div id="light-state" style="background-color: gray;"></td>
+                <!-- switch light state button -->
+            <td>
+                <button
+                    class="primary-button"
+                    title="Cambiar estado del semaforo"
+                >
+                Cambiar
+                </button>
+            </td>
+                <!-- free light button -->
+                <td>
+                <button
+                    id="button-free-light-${lightCode}"
+                    class="secondary-button-icon"
+                    title="Liberar control manual del semaforo"
+                >
+                    <span class="material-symbols-outlined">lock_open_right</span>
+                </button>
+            </td>
+        </tr>
+    `
+    $manualLightsTable.append(manualLightRow);
+
+    $(`#manual-light-row-${lightCode}`).find(`#button-free-light-${lightCode}`).click( async ()=>{
+        console.log('si me aplastaron');
+    });
+}
+
+function saveManualControllLightRow(lightCode, section){
+    const rowInfo = {lightCode: lightCode, section: section, state: none}
+    
+    localStorage.setItem("manualLights", JSON.stringify(rowInfo));  
+}
+
+function deleteManualLightInStorage(lightCode, section){
+    
+}
+
+function deleteAllManualLightsInStorage(lightCode, section){
+    
+}
+
 // -- HANDLERS -- 
 
 function handletelemetryUpdate(message){
@@ -267,6 +331,29 @@ function handleUserLogout(){
     }
 }
 
+function handlelightTakenUpdate(lightTaken){
+    const lightCode = lightTaken.lightCode;
+    $(`#take-controll-${lightCode}`).addClass('disabled');
+    $(`#take-controll-${lightCode}`).prop('disabled', true);
+}
+
+function handlelightFreedUpdate(lightFreed){
+    const lightCode = lightFreed.lightCode;
+    $(`#take-controll-${lightCode}`).removeClass('disabled');
+    $(`#take-controll-${lightCode}`).prop('disabled', false);
+}
+
+async function handleTakeLightControll(lightCode, section) {
+    try{
+        await lightsClient.takeManualLightControll(user.id, lightCode);
+        insertManualControllLightRow(lightCode, section);
+        saveManualControllLightRow(lightCode, section);
+    }
+    catch(error){
+        showErrorNotification({text: error.message})
+    }
+}
+
 
 
 // --- NOTIFICATIONS ---
@@ -297,7 +384,7 @@ function showErrorNotification(opt = {}){
     position: "right", // `left`, `center` or `right`
     stopOnFocus: true, // Prevents dismissing of toast on hover
     style: {
-        background: "linear-gradient(to right, #ee7238ff, #e72424ff)",  
+        background: "linear-gradient(to right, #ee7238ff, #e72424ff)",
     }
     }).showToast();
 }
