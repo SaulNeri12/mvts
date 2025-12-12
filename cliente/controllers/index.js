@@ -78,7 +78,6 @@ async function handleLogin() {
     let email = eInput.value;
     let password = pInput.value;
     const user = await userClient.login(email, password)
-    console.log("User logged in:", user);
 
     // Store tokens in localStorage
     sessionStorage.setItem("accessToken", JSON.stringify(user.tokens.access));
