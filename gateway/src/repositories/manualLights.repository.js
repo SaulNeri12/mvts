@@ -8,7 +8,7 @@ const { RepositoryError, NotFoundError } = require('../errors/errors');
  * Each user may take up to `MAX_PER_USER` lights concurrently.
  */
 const MAX_PER_USER = 3;
-const manualLights = {};
+const manualLights = [];
 
 /**
  * Add a manual control assignment for a user and a light.
@@ -20,14 +20,16 @@ const manualLights = {};
  * @param {string} lightCode - Light identifier code.
  * @returns {boolean} True if the assignment was added, false otherwise.
  */
-exports.addManualControll = (userId, lightCode) => {
+exports.addManualControll = (userId, light) => {
+    // light: {code: "", section: "", status: ""}
     if (!manualLights[userId]) manualLights[userId] = [];
 
     const userLights = manualLights[userId];
-    if (userLights.includes(lightCode)) return false;
+    if (userLights.some(manualLight => manualLight.code === light.code)) {
+        throw new RepositoryError('El semaforo ya se encuentra en control manual');
+    }
 
-    userLights.push(lightCode);
-    return true;
+    userLights.push(light);
 };
 
 /**
@@ -35,10 +37,11 @@ exports.addManualControll = (userId, lightCode) => {
  *
  * @param {string} lightCode - Light identifier code.
  */
-exports.validateIfAlreadyTaken = (lightCode) => {
+exports.validateIfAlreadyTaken = (light) => {
     for (const lights of Object.values(manualLights)) {
-        if (Array.isArray(lights) && lights.includes(lightCode)) {
-            throw new RepositoryError('El semáforo ya se encuentra bajo control');
+        if (!Array.isArray(lights)) continue;
+        if (lights.some(l => l && l.code === light.code)) {
+            throw new RepositoryError('El semáforo ya se encuentra bajo control manual');
         }
     }
 };
@@ -48,19 +51,16 @@ exports.validateIfAlreadyTaken = (lightCode) => {
  *
  * @param {string} lightCode - Light identifier code.
  */
-exports.validateIfTakenByUser = (userId, lightCode) => {
+exports.validateIfTakenByUser = (userId, light) => {
     const userLights = manualLights[userId];
-    if (!userLights || userLights.length === 0) {
-        return false;
-    }
-    return userLights.includes(lightCode);
+    if (!Array.isArray(userLights) || userLights.length === 0) return false;
+    return userLights.some(l => l && l.code === light.code);
 };
 
-exports.validateIfTaken = (lightCode) => {
+exports.validateIfTaken = (light) => {
     for (const lights of Object.values(manualLights)) {
-        if (Array.isArray(lights) && lights.includes(lightCode)) {
-            return true;
-        }
+        if (!Array.isArray(lights)) continue;
+        if (lights.some(l => l && l.code === light.code)) return true;
     }
     return false;
 };
@@ -72,12 +72,11 @@ exports.validateIfTaken = (lightCode) => {
  * @param {string} userId - User identifier.
  */
 exports.validateMaximumInControll = (userId) => {
-    if (!userId) return false;
     const userLights = manualLights[userId];
-    if (!Array.isArray(userLights)) return true;
+    if (!Array.isArray(userLights)) return;
 
-    if(userLights.length > MAX_PER_USER) {
-        throw new RepositoryError('Maximo de semaforos en manual alcanzado')
+    if (userLights.length >= MAX_PER_USER) {
+        throw new RepositoryError('Maximo de semaforos en manual alcanzado');
     }
 };
 
@@ -97,20 +96,19 @@ exports.getLightsByUserId = (userId) =>
  * @param {string} lightCode - Light identifier code to free.
  * @returns {boolean} True if the assignment was removed, false if it did not exist.
  */
-exports.freeManualControll = (userId, lightCode) => 
-{
+exports.freeManualControll = (userId, lightCode) => {
     const userLights = manualLights[userId];
-    if (userLights.length === 0) {
+    if (!Array.isArray(userLights) || userLights.length === 0) {
         throw new NotFoundError('El usuario brindado no cuenta con semaforos a liberar');
     }
 
-    const idx = userLights.indexOf(lightCode);
+    const idx = userLights.findIndex(l => l && l.code === lightCode);
     if (idx === -1) {
         throw new NotFoundError('El usuario brindado no cuenta con el semaforo a liberar');
     }
     userLights.splice(idx, 1);
     if (userLights.length === 0) delete manualLights[userId];
-    console.log(manualLights[userId]);
+    return true;
 };
 
 /**
@@ -121,8 +119,6 @@ exports.freeManualControll = (userId, lightCode) =>
  */
 exports.freeAllManualControllLights = (userId) => 
 {
-    if (!userId) return false;
-    if (!manualLights[userId]) return false;
+    if (!manualLights[userId]) return;
     delete manualLights[userId];
-    return true;
 };
