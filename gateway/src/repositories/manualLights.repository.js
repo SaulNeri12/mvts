@@ -37,10 +37,10 @@ exports.addManualControll = (userId, light) => {
  *
  * @param {string} lightCode - Light identifier code.
  */
-exports.validateIfAlreadyTaken = (light) => {
+exports.validateIfAlreadyTaken = (lightCode) => {
     for (const lights of Object.values(manualLights)) {
         if (!Array.isArray(lights)) continue;
-        if (lights.some(l => l && l.code === light.code)) {
+        if (lights.some(l => l && l.code === lightCode)) {
             throw new RepositoryError('El semáforo ya se encuentra bajo control manual');
         }
     }

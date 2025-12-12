@@ -2,13 +2,13 @@ const manualLightsRepository = require('../repositories/manualLights.repository'
 const lightsEmitter = require('../emmiters/lights.emitter')
 
 
-exports.takeLightManual = async (userId, lightCode) => 
+exports.takeLightManual = async (userId, light) => 
 {
     try{
-        manualLightsRepository.validateIfAlreadyTaken(lightCode);
-        manualLightsRepository.validateMaximumInControll(userId, lightCode);
-        manualLightsRepository.addManualControll(userId, lightCode);
-        lightsEmitter.emitLightTaken({userId, lightCode});
+        manualLightsRepository.validateIfAlreadyTaken(light.code);
+        manualLightsRepository.validateMaximumInControll(userId);
+        manualLightsRepository.addManualControll(userId, light);
+        lightsEmitter.emitLightTaken({userId, light});
     }
     catch(error){
         throw error
