@@ -92,7 +92,7 @@ exports.handleReleaseManualControl = async (req, res, next) => {
 exports.handleGetAllManualLights = async (req, res, next) => {
     try{
         const { userId } = req.params;
-        const manualLights = await manualLightsRepository.getAllLights();
+        const manualLights = await manualLightsRepository.getLightsByUserId(userId);
         res.status(200).json(manualLights);
     } catch (error) {   
         next(error);
